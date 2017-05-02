@@ -17,20 +17,22 @@
     android:id="@+id/chat_conversation"
     android:hint="text"/>
     </ScrollView>
-    <Button
-        android:id="@+id/send_message"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:clickable="true"
+        android:src="@drawable/ic_action_send"
+        android:id="@+id/send_message"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentEnd="true"
+        />
+
 
     <EditText
         android:id="@+id/message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_toStartOf="@+id/send_message"/>

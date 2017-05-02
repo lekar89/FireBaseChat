@@ -3,8 +3,8 @@ package pom.lekar.firebasechat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -18,10 +18,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class ChatRoom extends AppCompatActivity {
-EditText mEditText;
-    Button mButton;
+    EditText mEditText;
+    ImageButton mButton;
     TextView mTextView;
-String userName,roomName;
+    String userName,roomName;
     DatabaseReference root;
     DatabaseReference messageRoot;
     String tmpKey;
@@ -30,7 +30,7 @@ String userName,roomName;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
         mEditText = (EditText) findViewById(R.id.message_text);
-        mButton = (Button) findViewById(R.id.send_message);
+        mButton = (ImageButton) findViewById(R.id.send_message);
         mTextView = (TextView) findViewById(R.id.chat_conversation);
         userName= getIntent().getStringExtra("userName");
         roomName= getIntent().getStringExtra("chatRoom");
@@ -41,7 +41,7 @@ String userName,roomName;
             @Override
             public void onClick(View v) {
                 Map<String, Object> map = new HashMap<String, Object>() ;
-                 tmpKey = root.push().getKey();
+                tmpKey = root.push().getKey();
                 root.updateChildren(map);
 
                 messageRoot = root.child(tmpKey);
@@ -79,7 +79,7 @@ String userName,roomName;
             }
         });
     }
-String chatMsg,chatUser;
+    String chatMsg,chatUser;
     private void appenedChatConversation(DataSnapshot mDataSnapshot) {
         Iterator iterator= mDataSnapshot.getChildren().iterator();
         while(iterator.hasNext()){
