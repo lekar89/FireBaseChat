@@ -30,7 +30,12 @@
             android:id="@+id/addMessageImageView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            ads:srcCompat="@drawable/ic_add_black"/>
+            ads:srcCompat="@mipmap/c_plus"/>
+        <ImageView
+            android:id="@+id/addMessageVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            ads:srcCompat="@mipmap/ic_send_video"/>
 
         <EditText
             android:id="@+id/messageEditText"

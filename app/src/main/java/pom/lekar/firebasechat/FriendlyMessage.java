@@ -10,15 +10,19 @@ public class FriendlyMessage {
     private String name;
     private String photoUrl;
     private String imageUrl;
+    private String videoUrl;
+
+
 
     public FriendlyMessage() {
     }
 
-    public FriendlyMessage(String text, String name, String photoUrl, String imageUrl) {
+    public FriendlyMessage(String text, String name, String photoUrl, String imageUrl,String videoUrl) {
         this.text = text;
         this.name = name;
         this.photoUrl = photoUrl;
         this.imageUrl = imageUrl;
+        this.videoUrl = videoUrl;
     }
 
     public String getId() {
@@ -59,6 +63,14 @@ public class FriendlyMessage {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String mVideoUrl) {
+        videoUrl = mVideoUrl;
     }
 }
 

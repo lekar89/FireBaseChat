@@ -46,6 +46,10 @@ dependencies {
 
 
 
+
+
+
+
     // Firebase UI
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
 

@@ -37,6 +37,13 @@
                 android:adjustViewBounds="true"
                 android:background="@color/colorPrimary"
                 android:scaleType="fitCenter"/>
+            <VideoView
+                android:id="@+id/messageVideoView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:background="@color/colorPrimary"
+                android:scaleType="fitCenter"/>
 
             <TextView
                 android:id="@+id/messengerTextView"
