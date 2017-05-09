@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity
 
     private void putInStorage(StorageReference storageReference, Uri uri, final String key, final int type) {
         storageReference.putFile(uri).addOnCompleteListener(MainActivity.this,
-                new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                  new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {

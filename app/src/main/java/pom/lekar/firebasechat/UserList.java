@@ -1,12 +1,11 @@
 package pom.lekar.firebasechat;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,16 +21,11 @@ import java.util.List;
 public class UserList extends AppCompatActivity {
     private RecyclerView mMessageRecyclerView;
     LinearLayoutManager mLinearLayoutManager;
-    ArrayList<User>mUsers;
+    ArrayList<User> mUsers;
     UsersListAdaper usersListAdaper;
-    ListView mListView;
 
-    @Override
-    protected void onPostResume() {
+    Context mContext= this;
 
-        usersListAdaper.notifyDataSetChanged();
-        super.onPostResume();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,29 +33,23 @@ public class UserList extends AppCompatActivity {
         setContentView(R.layout.activity_user_list);
 
         mUsers= new ArrayList<>();
+        mUsers = getAllUsersFromFirebase();
 
-        mListView = (ListView) findViewById(R.id.user_list_list_view);
+
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
-
-
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                mListView.setAdapter( new ArrayAdapter<>(this,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                R.layout.item_users, mUsers));
 
-        usersListAdaper = new  UsersListAdaper(getAllUsersFromFirebase(),this);
-        usersListAdaper.notifyDataSetChanged();
-        mMessageRecyclerView.setAdapter( usersListAdaper);
-
-
+//        usersListAdaper = new  UsersListAdaper(mUsers,this);
+//        mMessageRecyclerView.setAdapter( usersListAdaper);
+        //usersListAdaper.notifyDataSetChanged();
 
 
     }
 
-
-    public  ArrayList<User> getAllUsersFromFirebase() {
-        final ArrayList<User> userArrayList=new ArrayList<>();
+    public ArrayList<User> getAllUsersFromFirebase() {
+       final ArrayList<User> userArrayList =new ArrayList<>();
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(Constants.ARG_USERS)
@@ -71,20 +59,23 @@ public class UserList extends AppCompatActivity {
                         Iterator<DataSnapshot> dataSnapshots = dataSnapshot.getChildren()
                                 .iterator();
                         List<User> users = new ArrayList<>();
-                        while (dataSnapshots.hasNext()) {
+                        int i = 0;
+                        while (dataSnapshots.hasNext()) {;
                             DataSnapshot dataSnapshotChild = dataSnapshots.next();
                             User user = dataSnapshotChild.getValue(User.class);
                             if (!TextUtils.equals(user.getUid(),
                                     FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                 users.add(user);
-                                userArrayList.add(user);
-
-                                usersListAdaper.notifyDataSetChanged();
-                                Toast.makeText(UserList.this, user.getName(), Toast.LENGTH_SHORT).show();
+                                userArrayList.add(new User(user.getUid(), user.getName(), user.getPhotoUrl()));
+                                Toast.makeText(UserList.this,
+                                        users.get(i++).getName(), Toast.LENGTH_SHORT).show();
+                               // Toast.makeText(UserList.this, userArrayList.size(), Toast.LENGTH_SHORT).show();
                             }
                         }
-
-//                        usersListAdaper.notifyDataSetChanged();
+                        userArrayList.add(new User("sdf","sdfs","http://www.simflight.com/wp-content/uploads/2015/07/11411901_1624097991165015_4700322721972491595_o.jpg"));
+                        usersListAdaper = new  UsersListAdaper(userArrayList,mContext);
+                        mMessageRecyclerView.setAdapter( usersListAdaper);
+                        usersListAdaper.notifyDataSetChanged();
                         // All users are retrieved except the one who is currently logged
                         // in device.
                     }
@@ -95,7 +86,7 @@ public class UserList extends AppCompatActivity {
                     }
                 });
 
-        return userArrayList;
+          return userArrayList;
     }
 
 }

@@ -3,6 +3,7 @@
           package="pom.lekar.firebasechat">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.STORAGE" />
 
     <application
         android:allowBackup="true"

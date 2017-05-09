@@ -39,10 +39,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -82,16 +83,57 @@ public class ChatActivity extends AppCompatActivity
     private VideoView mVideoView;
     private ImageView mAddMessageVideoView;
     String receiver;
+    DatabaseReference  rommRefrense;
+
+//      String room_type_1 = mFirebaseUser.getUid() + "_" + receiver;
+//      String room_type_2 = receiver + "_" + mFirebaseUser.getUid();
+
+//    private DatabaseReference isRoomExist () {
+//
+//
+//
+//        mFirebaseDatabaseReference.getRef()
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot mDataSnapshot) {
+//                        if (mDataSnapshot.hasChild(room_type_1)) {
+//                            Log.e(TAG, "sendMessageToFirebaseUser: " + room_type_1 + " exists");
+//                            rommRefrense = mFirebaseDatabaseReference
+//                                    .child(Constants.ARG_CHAT_ROOMS)
+//                                    .child(room_type_1);
+//
+//
+//                        } else if (mDataSnapshot.hasChild(room_type_2)) {
+//                            Log.e(TAG, "sendMessageToFirebaseUser: " + room_type_2 + " exists");
+//                            rommRefrense = mFirebaseDatabaseReference
+//                                    .child(Constants.ARG_CHAT_ROOMS)
+//                                    .child(room_type_2);
+//                        } else {
+//                            Log.e(TAG, "sendMessageToFirebaseUser: success");
+//
+//                            rommRefrense = mFirebaseDatabaseReference
+//                                    .child(Constants.ARG_CHAT_ROOMS)
+//                                    .child(room_type_1);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError mDatabaseError) {
+//
+//                    }
+//
+//                });
+//
+//        return rommRefrense;
+//    }
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-  receiver= getIntent().getStringExtra("id");
-
+        receiver= getIntent().getStringExtra("id");
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
@@ -121,7 +163,14 @@ public class ChatActivity extends AppCompatActivity
                 FriendlyMessage.class,
                 R.layout.item_message,
                 MessageViewHolder.class,
-                mFirebaseDatabaseReference.child(Constants.ARG_CHAT_ROOMS).child(mFirebaseUser
+               // isRoomExist())
+//                mFirebaseDatabaseReference
+//                        .child(Constants.ARG_CHAT_ROOMS)
+//                        .child(room_type_1))
+//        {
+//            ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            mFirebaseDatabaseReference.child(
+        Constants.ARG_CHAT_ROOMS).child(mFirebaseUser
                         .getUid()+"_"+receiver)) {
 
             @Override
@@ -134,6 +183,8 @@ public class ChatActivity extends AppCompatActivity
             }
 
 
+
+
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               FriendlyMessage friendlyMessage, int position) {
@@ -142,7 +193,9 @@ public class ChatActivity extends AppCompatActivity
                     viewHolder.messageTextView.setText(friendlyMessage.getText());
                     viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
                     viewHolder.messageImageView.setVisibility(ImageView.GONE);
+
                 } else if (friendlyMessage.getImageUrl() != null) {
+
                     String imageUrl = friendlyMessage.getImageUrl();
                     if (imageUrl.startsWith("gs://")) {
                         StorageReference storageReference = FirebaseStorage.getInstance()
@@ -153,9 +206,14 @@ public class ChatActivity extends AppCompatActivity
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
                                             String downloadUrl = task.getResult().toString();
-                                            Glide.with(viewHolder.messageImageView.getContext())
-                                                    .load(downloadUrl)
+                                            Picasso.with(ChatActivity.this) //передаем контекст приложения
+                                                    .load(downloadUrl) //адрес изображения
                                                     .into(viewHolder.messageImageView);
+
+
+//                                            Glide.with(viewHolder.messageImageView.getContext())
+//                                                    .load(downloadUrl)
+//                                                    .into(viewHolder.messageImageView);
                                         } else {
                                             Log.w(TAG, "Getting download url was not successful.",
                                                     task.getException());
@@ -163,14 +221,18 @@ public class ChatActivity extends AppCompatActivity
                                     }
                                 });
                     } else {
-                        Glide.with(viewHolder.messageImageView.getContext())
-                                .load(friendlyMessage.getImageUrl())
+
+                        Picasso.with(ChatActivity.this) //передаем контекст приложения
+                                .load(friendlyMessage.getImageUrl()) //адрес изображения
                                 .into(viewHolder.messageImageView);
                     }
                     viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
                     viewHolder.messageTextView.setVisibility(TextView.GONE);
+
                 } else if (friendlyMessage.getVideoUrl() != null) {
+
                     String videoUrl = friendlyMessage.getVideoUrl();
+                    // viewHolder.messageVideoeView.setVideoURI(Uri.parse(videoUrl));
 
                     StorageReference storageReference = FirebaseStorage.getInstance()
                             .getReferenceFromUrl(videoUrl);
@@ -192,7 +254,9 @@ public class ChatActivity extends AppCompatActivity
                                 }
                             });
 
-                    viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
+                    viewHolder.messageImageView.setVisibility(ImageView.GONE);
+                    viewHolder.messageVideoeView.setVisibility(VideoView.VISIBLE);
+
                     viewHolder.messageTextView.setVisibility(TextView.GONE);
                 }
 
@@ -306,7 +370,10 @@ public class ChatActivity extends AppCompatActivity
                     FriendlyMessage tempMessage = new FriendlyMessage(null, mUsername, mPhotoUrl,
                             LOADING_IMAGE_URL, null);
 
-                    mFirebaseDatabaseReference.child(Constants.ARG_CHAT_ROOMS).push()
+                   // isRoomExist().push()
+                    mFirebaseDatabaseReference.child(
+                            Constants.ARG_CHAT_ROOMS).child(mFirebaseUser
+                            .getUid()+"_"+receiver).push()
                             .setValue(tempMessage, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError,
@@ -396,7 +463,10 @@ public class ChatActivity extends AppCompatActivity
 
                 FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername,
                         mPhotoUrl, null, null);
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(friendlyMessage);
+                //isRoomExist().push().setValue(friendlyMessage);
+                mFirebaseDatabaseReference.child(
+                        Constants.ARG_CHAT_ROOMS).child(mFirebaseUser
+                        .getUid()+"_"+receiver).push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
                 break;
             case R.id.addMessageVideo:

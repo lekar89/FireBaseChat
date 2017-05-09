@@ -26,10 +26,7 @@ public class UsersListAdaper extends RecyclerView.Adapter<UsersListAdaper.UserVi
         this.mUsers = mUsers;
         this.mContext = mContext;
     }
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
+
     public static class UserViewHolder extends RecyclerView.ViewHolder {
 
         TextView personName;
@@ -53,6 +50,7 @@ public class UsersListAdaper extends RecyclerView.Adapter<UsersListAdaper.UserVi
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, final int position) {
+
         holder.personName.setText(mUsers.get(position).getName());
 
         Picasso.with(mContext) //передаем контекст приложения
@@ -63,14 +61,15 @@ public class UsersListAdaper extends RecyclerView.Adapter<UsersListAdaper.UserVi
             public void onClick(View v) {
                 Intent intent=  new Intent(mContext,ChatActivity.class);
                 intent.putExtra("id",mUsers.get(position).getUid());
-                mContext.startActivity(new Intent(intent));
+                //mContext.startActivity(new Intent(intent));
+                mContext.startActivity(intent);
             }
         });
 
 
 
-    }
 
+    }
     @Override
     public int getItemCount() {
         return mUsers.size();
