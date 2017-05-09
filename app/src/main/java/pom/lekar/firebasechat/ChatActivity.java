@@ -46,13 +46,13 @@ import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
-public class MainActivity extends AppCompatActivity
+public class ChatActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mFirebaseDatabaseReference;
+    private DatabaseReference chatRef;
     private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder>
             mFirebaseAdapter;
 
@@ -81,13 +81,17 @@ public class MainActivity extends AppCompatActivity
     private ImageView mAddMessageImageView;
     private VideoView mVideoView;
     private ImageView mAddMessageVideoView;
-
+    String receiver;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+  receiver= getIntent().getStringExtra("id");
+
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
@@ -109,12 +113,16 @@ public class MainActivity extends AppCompatActivity
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+//        if( mFirebaseDatabaseReference.child(){
+
+
         mFirebaseAdapter = new FirebaseRecyclerAdapter<FriendlyMessage,
                 MessageViewHolder>(
                 FriendlyMessage.class,
                 R.layout.item_message,
                 MessageViewHolder.class,
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD)) {
+                mFirebaseDatabaseReference.child(Constants.ARG_CHAT_ROOMS).child(mFirebaseUser
+                        .getUid()+"_"+receiver)) {
 
             @Override
             protected FriendlyMessage parseSnapshot(DataSnapshot snapshot) {
@@ -126,7 +134,6 @@ public class MainActivity extends AppCompatActivity
             }
 
 
-
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               FriendlyMessage friendlyMessage, int position) {
@@ -135,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                     viewHolder.messageTextView.setText(friendlyMessage.getText());
                     viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
                     viewHolder.messageImageView.setVisibility(ImageView.GONE);
-                } else if(friendlyMessage.getImageUrl()!= null) {
+                } else if (friendlyMessage.getImageUrl() != null) {
                     String imageUrl = friendlyMessage.getImageUrl();
                     if (imageUrl.startsWith("gs://")) {
                         StorageReference storageReference = FirebaseStorage.getInstance()
@@ -162,7 +169,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
                     viewHolder.messageTextView.setVisibility(TextView.GONE);
-                } else if(friendlyMessage.getVideoUrl()!= null) {
+                } else if (friendlyMessage.getVideoUrl() != null) {
                     String videoUrl = friendlyMessage.getVideoUrl();
 
                     StorageReference storageReference = FirebaseStorage.getInstance()
@@ -192,10 +199,10 @@ public class MainActivity extends AppCompatActivity
 
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
                 if (friendlyMessage.getPhotoUrl() == null) {
-                    viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,
+                    viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(ChatActivity.this,
                             R.drawable.ic_add_black));
                 } else {
-                    Glide.with(MainActivity.this)
+                    Glide.with(ChatActivity.this)
                             .load(friendlyMessage.getPhotoUrl())
                             .into(viewHolder.messengerImageView);
                 }
@@ -280,7 +287,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-          Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
@@ -290,15 +297,16 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
 
 
-        if (requestCode == REQUEST_IMAGE || requestCode== REQUEST_VIDEO) {
+        if (requestCode == REQUEST_IMAGE || requestCode == REQUEST_VIDEO) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     final Uri uri = data.getData();
                     Log.d(TAG, "Uri: " + uri.toString());
 
                     FriendlyMessage tempMessage = new FriendlyMessage(null, mUsername, mPhotoUrl,
-                            LOADING_IMAGE_URL,null);
-                    mFirebaseDatabaseReference.child(MESSAGES_CHILD).push()
+                            LOADING_IMAGE_URL, null);
+
+                    mFirebaseDatabaseReference.child(Constants.ARG_CHAT_ROOMS).push()
                             .setValue(tempMessage, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError,
@@ -311,7 +319,7 @@ public class MainActivity extends AppCompatActivity
                                                         .child(key)
                                                         .child(uri.getLastPathSegment());
 
-                                        putInStorage(storageReference, uri, key,requestCode);
+                                        putInStorage(storageReference, uri, key, requestCode);
                                     } else {
                                         Log.w(TAG, "Unable to write message to database.",
                                                 databaseError.toException());
@@ -326,24 +334,21 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     private void putInStorage(StorageReference storageReference, Uri uri, final String key, final int type) {
-        storageReference.putFile(uri).addOnCompleteListener(MainActivity.this,
+        storageReference.putFile(uri).addOnCompleteListener(ChatActivity.this,
                 new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
-                            FriendlyMessage friendlyMessage=null;
-                            if(type==REQUEST_IMAGE) {
+                            FriendlyMessage friendlyMessage = null;
+                            if (type == REQUEST_IMAGE) {
                                 friendlyMessage =
                                         new FriendlyMessage(null, mUsername, mPhotoUrl,
                                                 task.getResult().getMetadata().getDownloadUrl()
                                                         .toString(), null);
-                            }
-                            else if (type==REQUEST_VIDEO){
+                            } else if (type == REQUEST_VIDEO) {
                                 friendlyMessage =
-                                        new FriendlyMessage(null, mUsername, mPhotoUrl,null,
+                                        new FriendlyMessage(null, mUsername, mPhotoUrl, null,
                                                 task.getResult().getMetadata().getDownloadUrl()
                                                         .toString());
                             }
@@ -358,6 +363,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -369,7 +375,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.fresh_config_menu:
-                startActivity(new Intent(MainActivity.this,UserList.class));
+                startActivity(new Intent(ChatActivity.this, UserList.class));
                 //fetchConfig();
                 return true;
             case R.id.sign_out_menu:
@@ -385,11 +391,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         Intent intent;
-        switch (v.getId()){
-            case  R.id.sendButton:
+        switch (v.getId()) {
+            case R.id.sendButton:
 
                 FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername,
-                        mPhotoUrl, null,null);
+                        mPhotoUrl, null, null);
                 mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
                 break;
@@ -413,7 +419,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     private static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
         ImageView messageImageView;
@@ -431,68 +436,6 @@ public class MainActivity extends AppCompatActivity
             messengerImageView = (CircleImageView) itemView.findViewById(R.id.messengerImageView);
         }
     }
-
-    private FirebaseRemoteConfig mFirebaseRemoteConfig;
-
-
-
-//    public void fetchConfig() {
-//        long cacheExpiration = 3600; // 1 hour in seconds
-//
-//        if (mFirebaseRemoteConfig.getInfo().getConfigSettings()
-//                .isDeveloperModeEnabled()) {
-//            cacheExpiration = 0;
-//        }
-//        mFirebaseRemoteConfig.fetch(cacheExpiration)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        // Make the fetched config available via
-//                        // FirebaseRemoteConfig get<type> calls.
-//                        mFirebaseRemoteConfig.activateFetched();
-//                        applyRetrievedLengthLimit();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        // There has been an error fetching the config
-//                        Log.w(TAG, "Error fetching config: " +
-//                                e.getMessage());
-//                        applyRetrievedLengthLimit();
-//                    }
-//                });
-//    }
-//
-//
-//    private void applyRetrievedLengthLimit() {
-//        Long friendly_msg_length =
-//                mFirebaseRemoteConfig.getLong("friendly_msg_length");
-//        mMessageEditText.setFilters(new InputFilter[]{new
-//                InputFilter.LengthFilter(friendly_msg_length.intValue())});
-//        Log.d(TAG, "FML is: " + friendly_msg_length);
-//    }
-
-    //в onCrete
-    //        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-//
-//// Define Firebase Remote Config Settings.
-//        FirebaseRemoteConfigSettings firebaseRemoteConfigSettings =
-//                new FirebaseRemoteConfigSettings.Builder()
-//                        .setDeveloperModeEnabled(true)
-//                        .build();
-//
-//// Define default config values. Defaults are used when fetched config values are not
-//// available. Eg: if an error occurred fetching values from the server.
-//        Map<String, Object> defaultConfigMap = new HashMap<>();
-//        defaultConfigMap.put("friendly_msg_length", 10L);
-//
-//// Apply config settings and default values.
-//        mFirebaseRemoteConfig.setConfigSettings(firebaseRemoteConfigSettings);
-//        mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
-
-// Fetch remote config.
-    //fetchConfig();
-
-
 }
+
+

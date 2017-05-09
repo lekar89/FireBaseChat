@@ -20,7 +20,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -75,8 +77,7 @@ public class SignInActivity extends AppCompatActivity implements
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
+
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
@@ -114,8 +115,28 @@ public class SignInActivity extends AppCompatActivity implements
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            addUserToDatabase( mFirebaseAuth.getCurrentUser());
                             startActivity(new Intent(SignInActivity.this, MainActivity.class));
-                            finish();
+                                                        finish();
+                        }
+                    }
+                });
+    }
+
+    public void addUserToDatabase( FirebaseUser fUser) {
+        User user = new User(fUser.getUid(),fUser.getDisplayName(),fUser.getPhotoUrl().toString());
+                        FirebaseDatabase.getInstance()
+                .getReference()
+                .child(Constants.ARG_USERS)
+                .child(fUser.getUid())
+                .setValue(user)
+                .addOnCompleteListener(new OnCompleteListener<Void> () {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // successfully added user
+                        } else {
+                            // failed to add user
                         }
                     }
                 });
