@@ -23,10 +23,10 @@ import pom.lekar.firebasechat.models.User;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-
+    Button       reg,logIN;
     EditText     etLoginEmail, etLoginPassword;
     FirebaseAuth firebaseAuth;
-    Button       reg,logIN;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
