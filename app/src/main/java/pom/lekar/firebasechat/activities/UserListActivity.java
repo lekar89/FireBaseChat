@@ -56,7 +56,7 @@ public class UserListActivity extends AppCompatActivity {
         FirebaseUser mFirebaseUser =  FirebaseAuth.getInstance().getCurrentUser();
 
         if (mFirebaseUser == null) {
-            startActivity(new Intent(this, SignInActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
 
         }
@@ -75,7 +75,7 @@ public class UserListActivity extends AppCompatActivity {
                                 .iterator();
                         List<User> users = new ArrayList<>();
 
-                        while (dataSnapshots.hasNext()) {;
+                        while (dataSnapshots.hasNext()) {
                             DataSnapshot dataSnapshotChild = dataSnapshots.next();
                             User user = dataSnapshotChild.getValue(User.class);
                             if (!TextUtils.equals(user.getUid(),
