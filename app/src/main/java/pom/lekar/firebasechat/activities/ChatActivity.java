@@ -205,7 +205,7 @@ public class ChatActivity extends AppCompatActivity
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
 
                 if (friendlyMessage.getPhotoUrl() == null) {
-                    //Сменинь на нормальную заглушку!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    
                     viewHolder.messengerImageView.setImageDrawable(ContextCompat.getDrawable(ChatActivity.this,
                             R.drawable.ic_add_black));
                 } else {
