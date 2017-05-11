@@ -49,7 +49,6 @@ import pom.lekar.firebasechat.MyIntentService;
 import pom.lekar.firebasechat.R;
 import pom.lekar.firebasechat.models.FriendlyMessage;
 
-import static pom.lekar.firebasechat.activities.MainActivity.MESSAGES_CHILD;
 
 public class ChatActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -163,6 +162,7 @@ public class ChatActivity extends AppCompatActivity
                         } else {
                             Log.e(TAG,  " case 3 createdRoom");
                             mFirebaseDatabaseReference
+                                    .child(Constants.ARG_ROOMS)
                                     .child(room_type_1)
                                     .push()
                                     .setValue(new FriendlyMessage("","","","",""));
@@ -369,7 +369,7 @@ public class ChatActivity extends AppCompatActivity
                     FriendlyMessage tempMessage = new FriendlyMessage(null, mUsername, mPhotoUrl,
                             null, null);
 
-                    mFirebaseDatabaseReference.child(MESSAGES_CHILD).push()
+                    mFirebaseDatabaseReference.child(Constants.ARG_MESSAGE).push()
                             .setValue(tempMessage, new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(DatabaseError databaseError,
