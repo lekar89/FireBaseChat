@@ -120,7 +120,7 @@ public class SignInActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             addUserToDatabase( mFirebaseAuth.getCurrentUser());
-                            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                            startActivity(new Intent(SignInActivity.this, UserListActivity.class));
                                                         finish();
                         }
                     }

@@ -3,7 +3,7 @@
           package="pom.lekar.firebasechat">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.STORAGE" />
+    <uses-permission android:name="android.permission.STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -13,11 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MainActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN"/>-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN"/> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
+            <!-- </intent-filter> -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -33,29 +35,29 @@
         <activity android:name=".activities.SignInActivity">
         </activity>
         <activity android:name=".activities.UserListActivity">
-           <intent-filter>
-            <action android:name="android.intent.action.MAIN"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
-            <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
 
+                <action android:name="android.intent.action.VIEW"/>
 
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
-               <action android:name="android.intent.action.VIEW"/>
-
-               <category android:name="android.intent.category.DEFAULT"/>
-               <category android:name="android.intent.category.BROWSABLE"/>
-
-               <data
-                   android:host="friendlychat.firebase.google.com"
-                   android:pathPrefix="/message"
-                   android:scheme="http"/>
-
-
-
-        </intent-filter>
+                <data
+                    android:host="friendlychat.firebase.google.com"
+                    android:pathPrefix="/message"
+                    android:scheme="http"/>
+            </intent-filter>
         </activity>
         <activity android:name=".activities.ChatActivity">
         </activity>
+
+        <service
+            android:name=".MyIntentService"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -46,9 +47,21 @@ public class UserListActivity extends AppCompatActivity {
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
-
+        isUserAuth();
 
     }
+
+    private void isUserAuth() {
+
+        FirebaseUser mFirebaseUser =  FirebaseAuth.getInstance().getCurrentUser();
+
+        if (mFirebaseUser == null) {
+            startActivity(new Intent(this, SignInActivity.class));
+            finish();
+
+        }
+    }
+
 
     public ArrayList<User> getAllUsersFromFirebase() {
        final ArrayList<User> userArrayList =new ArrayList<>();

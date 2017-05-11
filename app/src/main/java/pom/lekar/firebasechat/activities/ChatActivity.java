@@ -1,6 +1,8 @@
 package pom.lekar.firebasechat.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,9 +45,9 @@ import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pom.lekar.firebasechat.Constants;
+import pom.lekar.firebasechat.MyIntentService;
 import pom.lekar.firebasechat.R;
 import pom.lekar.firebasechat.models.FriendlyMessage;
-
 
 import static pom.lekar.firebasechat.activities.MainActivity.MESSAGES_CHILD;
 
@@ -67,6 +70,7 @@ public class ChatActivity extends AppCompatActivity
     private String mPhotoUrl;
     private String mReceiver;
 
+    private Context             mContext;
     private Button              mSendButton;
     private ProgressBar         mProgressBar;
     private EditText            mMessageEditText;
@@ -74,6 +78,20 @@ public class ChatActivity extends AppCompatActivity
     private ImageView           mAddMessageVideoView;
     private RecyclerView        mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        startService(new Intent(this, MyIntentService.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stopService(new Intent(this, MyIntentService.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +110,8 @@ public class ChatActivity extends AppCompatActivity
         mAddMessageVideoView.setOnClickListener(this);
         mAddMessageImageView.setOnClickListener(this);
 
+
+
         mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setStackFromEnd(true);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -101,6 +121,8 @@ public class ChatActivity extends AppCompatActivity
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        mContext=this;
 
         isUserAuth();
         roomChooser();
@@ -174,7 +196,6 @@ public class ChatActivity extends AppCompatActivity
                 return friendlyMessage;
             }
 
-
             @Override
             protected void populateViewHolder(final MessageViewHolder viewHolder,
                                               FriendlyMessage friendlyMessage,
@@ -236,17 +257,10 @@ public class ChatActivity extends AppCompatActivity
                     //IF  VIDEO
                 } else if (friendlyMessage.getVideoUrl() != null) {
 
-///Видео сетить здесь бля !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    String videoUrl = friendlyMessage.getVideoUrl();
-
-                    viewHolder.messageVideoeView.setVideoPath(videoUrl);
-                    //viewHolder.messageVideoeView.start();
-//                    viewHolder.messageVideoeView.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            viewHolder.messageVideoeView.start();
-//                        }
-//                    });
+                    viewHolder.messageVideoeView.setVideoPath(friendlyMessage.getVideoUrl());
+                    viewHolder.messageVideoeView.setMediaController(new MediaController(mContext));
+                    viewHolder.messageVideoeView.requestFocus();
+                    viewHolder.messageVideoeView.start();
 
                     viewHolder.messageVideoeView.setVisibility(VideoView.VISIBLE);
                     viewHolder.messageImageView. setVisibility(ImageView.GONE);
