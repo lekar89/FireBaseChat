@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat;
+package pom.lekar.firebasechat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,11 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import pom.lekar.firebasechat.Constants;
+import pom.lekar.firebasechat.R;
+import pom.lekar.firebasechat.activities.ChatActivity;
+import pom.lekar.firebasechat.models.User;
 
 /**
  * Created by lekar on 09.05.17.
@@ -60,7 +65,8 @@ public class UsersListAdaper extends RecyclerView.Adapter<UsersListAdaper.UserVi
             @Override
             public void onClick(View v) {
                 Intent intent=  new Intent(mContext,ChatActivity.class);
-                intent.putExtra("id",mUsers.get(position).getUid());
+                intent.putExtra(Constants.ID,mUsers.get(position).getUid());
+                intent.putExtra(Constants.USER_NAME,mUsers.get(position).getName());
                 //mContext.startActivity(new Intent(intent));
                 mContext.startActivity(intent);
             }

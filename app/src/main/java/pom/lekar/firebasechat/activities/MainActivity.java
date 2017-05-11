@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat;
+package pom.lekar.firebasechat.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +45,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import pom.lekar.firebasechat.R;
+import pom.lekar.firebasechat.models.FriendlyMessage;
 
 
 public class MainActivity extends AppCompatActivity
@@ -135,7 +137,10 @@ public class MainActivity extends AppCompatActivity
                     viewHolder.messageTextView.setText(friendlyMessage.getText());
                     viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
                     viewHolder.messageImageView.setVisibility(ImageView.GONE);
+                    viewHolder.messageVideoeView.setVisibility(ImageView.GONE);
+
                 } else if(friendlyMessage.getImageUrl()!= null) {
+                    Toast.makeText(MainActivity.this, "SET Image", Toast.LENGTH_SHORT).show();
                     String imageUrl = friendlyMessage.getImageUrl();
                     if (imageUrl.startsWith("gs://")) {
                         StorageReference storageReference = FirebaseStorage.getInstance()
@@ -162,31 +167,64 @@ public class MainActivity extends AppCompatActivity
                     }
                     viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
                     viewHolder.messageTextView.setVisibility(TextView.GONE);
-                } else if(friendlyMessage.getVideoUrl()!= null) {
-                    String videoUrl = friendlyMessage.getVideoUrl();
+                    viewHolder.messageVideoeView.setVisibility(ImageView.GONE);
 
-                    StorageReference storageReference = FirebaseStorage.getInstance()
-                            .getReferenceFromUrl(videoUrl);
-                    storageReference.getDownloadUrl().addOnCompleteListener(
-                            new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()) {
-                                        String downloadUrl = "http://www.cossa.ru/upload/iblock/cb9/big_1328145817Viral-Video-Marketing-Globe.jpg";
-                                        Glide.with(viewHolder.messageImageView.getContext())
-                                                .load(downloadUrl)
-                                                .into(viewHolder.messageImageView);
+                } else if(friendlyMessage.getVideoUrl()!= null)
+                {
+                    Toast.makeText(MainActivity.this, "SET VIDEO", Toast.LENGTH_SHORT).show();
 
-                                        // viewHolder.messageVideoeView.setVideoURI();
-                                    } else {
-                                        Log.w(TAG, "Getting download url was not successful.",
-                                                task.getException());
-                                    }
-                                }
-                            });
-
-                    viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
+                    viewHolder.messageImageView.setVisibility(ImageView.GONE);
+                    viewHolder.messageVideoeView.setVisibility(VideoView.VISIBLE);
                     viewHolder.messageTextView.setVisibility(TextView.GONE);
+
+                    String videoUrl = friendlyMessage.getVideoUrl();
+                    String url = "https://firebasestorage.googleapis.com/v0/b/fir-chat-483f5.appspot.com/o/NI4D9it33jfjcO8EpL3LVdLCTyj2%2F-KjosyQjCN5d1WYS-0Le%2Fvideo%3A28858?alt=media&token=e71ef664-c1df-4b37-8265-e5a23dfbac84";
+                    Uri uri = Uri.parse(videoUrl);
+
+
+                    VideoView mVideoView  = (VideoView)viewHolder.messageVideoeView;
+                    mVideoView.setMediaController(new MediaController(MainActivity.this));
+                    mVideoView.setVideoURI(uri);
+                    mVideoView.requestFocus();
+                    mVideoView.start();
+
+                  //  String videoUrl = friendlyMessage.getVideoUrl();
+//                    VideoView mVideoView  = viewHolder.messageVideoeView;
+//                    mVideoView.setMediaController(new MediaController(MainActivity.this));
+//
+//
+//
+//
+//                    Uri uri = Uri.parse(videoUrl);
+//                    mVideoView.setVideoURI(uri);
+//                    mVideoView.requestFocus();
+//                    mVideoView.start();
+                   // Toast.makeText(MainActivity.this, "DBLTK C", Toast.LENGTH_SHORT).show();
+//                    String videoUrl = friendlyMessage.getVideoUrl();
+//                    viewHolder.messageVideoeView.setVideoPath(videoUrl);
+//                    viewHolder.messageVideoeView.start();
+
+//                    StorageReference storageReference = FirebaseStorage.getInstance()
+//                            .getReferenceFromUrl(videoUrl);
+//                    storageReference.getDownloadUrl().addOnCompleteListener(
+//                            new OnCompleteListener<Uri>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Uri> task) {
+//                                    if (task.isSuccessful()) {
+//                                        String downloadUrl = "http://www.cossa.ru/upload/iblock/cb9/big_1328145817Viral-Video-Marketing-Globe.jpg";
+//                                        Glide.with(viewHolder.messageImageView.getContext())
+//                                                .load(downloadUrl)
+//                                                .into(viewHolder.messageImageView);
+//
+//                                        // viewHolder.messageVideoeView.setVideoURI();
+//                                    } else {
+//                                        Log.w(TAG, "Getting download url was not successful.",
+//                                                task.getException());
+//                                    }
+//                                }
+//                            });
+                    //Toast.makeText(MainActivity.this, "main VIDEO", Toast.LENGTH_SHORT).show();
+
                 }
 
 
@@ -228,8 +266,8 @@ public class MainActivity extends AppCompatActivity
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
 
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
-        mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(mSharedPreferences
-                .getInt(CodelabPreferences.FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT))});
+//        mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(mSharedPreferences
+//                .getInt(CodelabPreferences.FRIENDLY_MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT))});
 
         mMessageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -281,7 +319,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
           Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -328,7 +366,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    private void putInStorage(StorageReference storageReference, Uri uri, final String key, final int type) {
+    private void  putInStorage(StorageReference storageReference, Uri uri, final String key, final int type) {
         storageReference.putFile(uri).addOnCompleteListener(MainActivity.this,
                   new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -340,12 +378,14 @@ public class MainActivity extends AppCompatActivity
                                         new FriendlyMessage(null, mUsername, mPhotoUrl,
                                                 task.getResult().getMetadata().getDownloadUrl()
                                                         .toString(), null);
+                               Toast.makeText(MainActivity.this, "imege 11", Toast.LENGTH_SHORT).show();
                             }
                             else if (type==REQUEST_VIDEO){
                                 friendlyMessage =
                                         new FriendlyMessage(null, mUsername, mPhotoUrl,null,
                                                 task.getResult().getMetadata().getDownloadUrl()
                                                         .toString());
+                               // Toast.makeText(MainActivity.this, "video11", Toast.LENGTH_SHORT).show();
                             }
                             mFirebaseDatabaseReference.child(MESSAGES_CHILD).child(key)
                                     .setValue(friendlyMessage);
@@ -368,8 +408,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.fresh_config_menu:
-                startActivity(new Intent(MainActivity.this,UserList.class));
+            case R.id.user_list:
+                startActivity(new Intent(MainActivity.this,UserListActivity.class));
                 //fetchConfig();
                 return true;
             case R.id.sign_out_menu:
@@ -398,10 +438,10 @@ public class MainActivity extends AppCompatActivity
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("video/*");
                 startActivityForResult(intent, REQUEST_VIDEO);
-                Toast.makeText(this, "video", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "video", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.addMessageImageView:
-                Toast.makeText(this, "image", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "image", Toast.LENGTH_SHORT).show();
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");

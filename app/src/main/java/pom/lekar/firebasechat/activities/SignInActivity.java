@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat;
+package pom.lekar.firebasechat.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +24,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
+import pom.lekar.firebasechat.Constants;
+import pom.lekar.firebasechat.R;
+import pom.lekar.firebasechat.models.User;
+
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
@@ -34,7 +38,7 @@ public class SignInActivity extends AppCompatActivity implements
 
     private GoogleApiClient mGoogleApiClient;
 
-    // Firebase instance variables
+
     private FirebaseAuth mFirebaseAuth;
 
     @Override
@@ -42,13 +46,13 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        // Assign fields
+
         mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
 
-        // Set click listeners
+
         mSignInButton.setOnClickListener(this);
 
-        // Configure Google Sign In
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -58,7 +62,7 @@ public class SignInActivity extends AppCompatActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        // Initialize FirebaseAuth
+
         mFirebaseAuth = FirebaseAuth.getInstance();
     }
 

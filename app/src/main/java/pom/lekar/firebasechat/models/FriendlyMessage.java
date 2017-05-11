@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat;
+package pom.lekar.firebasechat.models;
 
 /**
  * Created by lekar on 02.05.17.
