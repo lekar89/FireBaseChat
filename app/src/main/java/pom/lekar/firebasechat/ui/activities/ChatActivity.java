@@ -53,7 +53,6 @@ public class ChatActivity extends AppCompatActivity
     private Utils mUtils;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +83,10 @@ public class ChatActivity extends AppCompatActivity
 
     }//end of onCreate
 
+    /**
+     * Constructs a new String by converting the specified array of
+     * bytes using the platform's default character encoding.
+     */
     private void setPhtoto() {
         if (mFirebaseUser.getPhotoUrl() != null) {
             mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
@@ -133,7 +136,7 @@ public class ChatActivity extends AppCompatActivity
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
                 mUsername = ANONYMOUS;
-                startActivity(new Intent(this, SignInActivity.class));
+                startActivity(new Intent(this, LoginActivity.class));
                 return true;
 
             case R.id.sign_in_menu:

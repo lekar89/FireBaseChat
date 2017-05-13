@@ -31,6 +31,7 @@ import pom.lekar.firebasechat.Constants;
 import pom.lekar.firebasechat.models.FriendlyMessage;
 import pom.lekar.firebasechat.ui.activities.ChatActivity;
 
+import pom.lekar.firebasechat.ui.activities.LoginActivity;
 import pom.lekar.firebasechat.ui.activities.SignInActivity;
 
 import static com.google.android.gms.internal.zzt.TAG;
@@ -60,8 +61,8 @@ public class Utils {
         initialize();
     }
 
-    public Utils() {
-
+    public Utils( Context mContext) {
+        this.mContext = mContext;
     }
 
     private void initialize(){
@@ -75,7 +76,7 @@ public class Utils {
     public void isUserAuth( FirebaseUser mFirebaseUser) {
 
         if (mFirebaseUser == null) {
-            mContext.startActivity(new Intent(mContext, SignInActivity.class));
+            mContext.startActivity(new Intent(mContext, LoginActivity.class));
                     }
     }
 

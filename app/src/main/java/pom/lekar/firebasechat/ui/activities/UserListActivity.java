@@ -29,6 +29,8 @@ import pom.lekar.firebasechat.utils.Utils;
 
 public class UserListActivity extends AppCompatActivity {
 
+    private static final String TAG = "UserListActivity";
+
     private Context              mContext;
     private ArrayList<User>      mUsers;
     private RecyclerView         mMessageRecyclerView;
@@ -51,7 +53,7 @@ public class UserListActivity extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(this);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-       new Utils().isUserAuth(  FirebaseAuth.getInstance().getCurrentUser());
+       new Utils(mContext).isUserAuth( FirebaseAuth.getInstance().getCurrentUser());
 
     }
 
