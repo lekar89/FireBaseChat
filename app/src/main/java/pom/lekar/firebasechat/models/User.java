@@ -1,9 +1,5 @@
 package pom.lekar.firebasechat.models;
 
-/**
- * Created by lekar on 08.05.17.
- */
-
 public class User {
     private String uid;
     private String name;
@@ -12,8 +8,8 @@ public class User {
     public User() {}
 
     public User(String uid, String nsme, String photoUrl) {
-        this.uid = uid;
-        this.name = nsme;
+        this.uid      = uid;
+        this.name     = nsme;
         this.photoUrl = photoUrl;
     }
 

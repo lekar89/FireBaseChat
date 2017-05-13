@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat;
+package pom.lekar.firebasechat.servises;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -22,17 +22,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import pom.lekar.firebasechat.activities.UserListActivity;
+import pom.lekar.firebasechat.Constants;
+import pom.lekar.firebasechat.R;
+import pom.lekar.firebasechat.ui.activities.UserListActivity;
 import pom.lekar.firebasechat.models.FriendlyMessage;
 
 
 public class MyIntentService extends IntentService {
 
+    //ОСТОРОЖНО ГОВНОКОД !!!
+
     public MyIntentService() { super("MyIntentService");}
 
     final String TAG = "SEVISEEE";
-
-
     FirebaseUser      mFirebaseUser;
     FriendlyMessage   mFriendlyMessage;
     DatabaseReference mFirebaseDatabaseRef;
@@ -56,7 +58,7 @@ public class MyIntentService extends IntentService {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        //РАБОТАЮЩИЙ  ГОВНОКОД
+                        //ПОЧТИ РАБОТАЮЩИЙ  ГОВНОКОД
                         List<String> set = new ArrayList<>();
                         List<String> set2 = new ArrayList<>();
                         Iterator iterator = dataSnapshot.getChildren().iterator();

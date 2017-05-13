@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat.activities;
+package pom.lekar.firebasechat.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

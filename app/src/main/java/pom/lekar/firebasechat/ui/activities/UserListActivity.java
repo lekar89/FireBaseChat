@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat.activities;
+package pom.lekar.firebasechat.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,16 +23,18 @@ import java.util.List;
 
 import pom.lekar.firebasechat.Constants;
 import pom.lekar.firebasechat.R;
-import pom.lekar.firebasechat.adapters.UsersListAdaper;
 import pom.lekar.firebasechat.models.User;
+import pom.lekar.firebasechat.ui.adapters.UsersListAdapter;
+import pom.lekar.firebasechat.utils.Utils;
 
 public class UserListActivity extends AppCompatActivity {
-    private RecyclerView mMessageRecyclerView;
-    LinearLayoutManager mLinearLayoutManager;
-    ArrayList<User> mUsers;
-    UsersListAdaper usersListAdaper;
 
-    Context mContext= this;
+    private Context              mContext;
+    private ArrayList<User>      mUsers;
+    private RecyclerView         mMessageRecyclerView;
+    private LinearLayoutManager  mLinearLayoutManager;
+    private UsersListAdapter     mUsersListAdapter;
+    private FirebaseAuth         mFirebaseAuth;
 
 
     @Override
@@ -41,30 +42,22 @@ public class UserListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
-        mUsers= new ArrayList<>();
-        mUsers = getAllUsersFromFirebase();
+        mContext      = this;
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mUsers        = new ArrayList<>();
+        mUsers        = getAllUsersFromFirebase();
 
         mMessageRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mMessageRecyclerView.setLayoutManager(mLinearLayoutManager);
-        isUserAuth();
 
-    }
+       new Utils().isUserAuth(  FirebaseAuth.getInstance().getCurrentUser());
 
-    private void isUserAuth() {
-
-        FirebaseUser mFirebaseUser =  FirebaseAuth.getInstance().getCurrentUser();
-
-        if (mFirebaseUser == null) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-
-        }
     }
 
 
     public ArrayList<User> getAllUsersFromFirebase() {
-       final ArrayList<User> userArrayList =new ArrayList<>();
+        final ArrayList<User> userArrayList =new ArrayList<>();
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(Constants.ARG_USERS)
@@ -86,9 +79,9 @@ public class UserListActivity extends AppCompatActivity {
                             }
                         }
 
-                        usersListAdaper = new  UsersListAdaper(userArrayList,mContext);
-                        mMessageRecyclerView.setAdapter( usersListAdaper);
-                        usersListAdaper.notifyDataSetChanged();
+                        mUsersListAdapter = new UsersListAdapter(mContext,userArrayList);
+                        mMessageRecyclerView.setAdapter(mUsersListAdapter);
+                        mUsersListAdapter.notifyDataSetChanged();
 
                     }
 
@@ -98,7 +91,7 @@ public class UserListActivity extends AppCompatActivity {
                     }
                 });
 
-          return userArrayList;
+        return userArrayList;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,9 +107,8 @@ public class UserListActivity extends AppCompatActivity {
                 startActivity(new Intent(UserListActivity.this, UserListActivity.class));
                 return true;
             case R.id.sign_out_menu:
-//                mFirebaseAuth.signOut();
-//                mUsername = ANONYMOUS;
-                startActivity(new Intent(this, SignInActivity.class));
+                mFirebaseAuth.signOut();
+                startActivity(new Intent(this, LoginActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

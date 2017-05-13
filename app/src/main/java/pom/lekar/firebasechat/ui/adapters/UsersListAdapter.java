@@ -1,4 +1,4 @@
-package pom.lekar.firebasechat.adapters;
+package pom.lekar.firebasechat.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,38 +16,40 @@ import java.util.List;
 
 import pom.lekar.firebasechat.Constants;
 import pom.lekar.firebasechat.R;
-import pom.lekar.firebasechat.activities.ChatActivity;
 import pom.lekar.firebasechat.models.User;
+import pom.lekar.firebasechat.ui.activities.ChatActivity;
 
 /**
  * Created by lekar on 09.05.17.
  */
 
-public class UsersListAdaper extends RecyclerView.Adapter<UsersListAdaper.UserViewHolder> {
-    List<User> mUsers;
-    Context mContext;
+public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.UserViewHolder> {
+    private List<User> mUsers;
+    private Context    mContext;
 
-    public UsersListAdaper(List<User> mUsers, Context mContext) {
-        this.mUsers = mUsers;
+    public UsersListAdapter( Context mContext, List<User> mUsers) {
+        this.mUsers   = mUsers;
         this.mContext = mContext;
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
 
-        TextView personName;
-        ImageView personPhoto;
+        TextView       personName;
+        ImageView      personPhoto;
         RelativeLayout mRelativeLayout;
+
         UserViewHolder(View itemView) {
             super(itemView);
 
-            personName = (TextView)itemView.findViewById(R.id.usersListTextView);
-            personPhoto = (ImageView)itemView.findViewById(R.id.userListImageView);
+            personName      = (TextView)itemView.findViewById(R.id.usersListTextView);
+            personPhoto     = (ImageView)itemView.findViewById(R.id.userListImageView);
             mRelativeLayout = (RelativeLayout)itemView.findViewById(R.id.conteiner_user_item);
         }
     }
 
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_users , parent, false);
         UserViewHolder pvh = new UserViewHolder(v);
         return pvh;
@@ -61,25 +63,22 @@ public class UsersListAdaper extends RecyclerView.Adapter<UsersListAdaper.UserVi
         Picasso.with(mContext) //передаем контекст приложения
                 .load(mUsers.get(position).getPhotoUrl() ) //адрес изображения
                 .into(holder.personPhoto);
+
         holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                Intent intent=  new Intent(mContext,ChatActivity.class);
-                intent.putExtra(Constants.ID,mUsers.get(position).getUid());
-                intent.putExtra(Constants.USER_NAME,mUsers.get(position).getName());
-                //mContext.startActivity(new Intent(intent));
+
+                Intent intent = new Intent(mContext,ChatActivity.class);
+                intent.putExtra(Constants.EXTRA_ID,mUsers.get(position).getUid());
+                intent.putExtra(Constants.EXTRA_USER_NAME,mUsers.get(position).getName());
                 mContext.startActivity(intent);
             }
         });
-
-
-
 
     }
     @Override
     public int getItemCount() {
         return mUsers.size();
     }
-
-
 }
