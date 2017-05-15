@@ -8,10 +8,22 @@ public class FriendlyMessage {
     private String photoUrl;
     private String imageUrl;
     private String videoUrl;
-
-
-
+    private String audioUrl;
+    private String latLong;
     public FriendlyMessage() {
+    }
+
+    public String getLatLong() {
+        return latLong;
+    }
+
+    public void setLatLong(String mLatLong) {
+        latLong = mLatLong;
+    }
+
+    public FriendlyMessage(String name, String photoUrl) {
+        this.name     = name;
+        this.photoUrl = photoUrl;
     }
 
     public FriendlyMessage(String text, String name, String photoUrl, String imageUrl,String videoUrl) {
@@ -69,5 +81,18 @@ public class FriendlyMessage {
     public void setVideoUrl(String mVideoUrl) {
         videoUrl = mVideoUrl;
     }
+
+    public String getAudioUrl() {
+        return audioUrl;
+    }
+
+    public void setAudioUrl(String mAudioUrl) {
+        audioUrl = mAudioUrl;
+    }
+
+
+
+
+
 }
 

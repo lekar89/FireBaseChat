@@ -5,15 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,14 +29,14 @@ import com.google.firebase.storage.UploadTask;
 import pom.lekar.firebasechat.Constants;
 import pom.lekar.firebasechat.models.FriendlyMessage;
 import pom.lekar.firebasechat.ui.activities.ChatActivity;
-
 import pom.lekar.firebasechat.ui.activities.LoginActivity;
-import pom.lekar.firebasechat.ui.activities.SignInActivity;
 
 import static com.google.android.gms.internal.zzt.TAG;
 import static pom.lekar.firebasechat.Constants.ARG_MESSAGE;
 import static pom.lekar.firebasechat.Constants.EXTRA_ID;
+import static pom.lekar.firebasechat.Constants.REQUEST_AUDIO;
 import static pom.lekar.firebasechat.Constants.REQUEST_IMAGE;
+import static pom.lekar.firebasechat.Constants.REQUEST_LOCATION;
 import static pom.lekar.firebasechat.Constants.REQUEST_VIDEO;
 
 /**
@@ -67,17 +66,17 @@ public class Utils {
 
     private void initialize(){
 
-       mReceiver=mChatActivity.getIntent().getStringExtra(EXTRA_ID);
-       mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-       mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-       mMessageShower = new MessageShower(mContext,mChatActivity);
-   }
+        mReceiver=mChatActivity.getIntent().getStringExtra(EXTRA_ID);
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mMessageShower = new MessageShower(mContext,mChatActivity);
+    }
 
     public void isUserAuth( FirebaseUser mFirebaseUser) {
 
         if (mFirebaseUser == null) {
             mContext.startActivity(new Intent(mContext, LoginActivity.class));
-                    }
+        }
     }
 
     private void putInStorage(StorageReference storageReference, Uri uri,  final int type) {
@@ -87,32 +86,41 @@ public class Utils {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
-                            FriendlyMessage friendlyMessage = null;
+                            FriendlyMessage friendlyMessage =
+                                    new FriendlyMessage(mFirebaseUser.getDisplayName(), mFirebaseUser.getPhotoUrl().toString());
+                            String fileURL = task.getResult().getMetadata().getDownloadUrl().toString();
+
                             if (type == REQUEST_IMAGE) {
-                                friendlyMessage =
-                                        new FriendlyMessage(null, mFirebaseUser.getDisplayName(), //mFirebaseUser.getPhotoUrl(),
-                                                null,
-                                                task.getResult().getMetadata().getDownloadUrl()
-                                                        .toString(), null);
+                                friendlyMessage.setImageUrl(fileURL);
+                                sendMessageToFirebase(friendlyMessage);
+
                             } else if (type == REQUEST_VIDEO) {
-                                friendlyMessage =
-                                        new FriendlyMessage(null, mFirebaseUser.getDisplayName() // mFirebaseUser.getPhotoUrl().toString()
-                                                , null
-                                                , null,
-                                                task.getResult().getMetadata().getDownloadUrl()
-                                                        .toString());
+                                friendlyMessage.setVideoUrl(fileURL);
+                                sendMessageToFirebase(friendlyMessage);
+
+                            } else if (type == REQUEST_AUDIO) {
+                                friendlyMessage.setAudioUrl(fileURL);
+                                sendMessageToFirebase(friendlyMessage);
+
+                                if (type == REQUEST_LOCATION) {
+
+                                    Place place = PlacePicker.getPlace(mContext,mChatActivity.getIntent());
+
+                                   // friendlyMessage.setPlace(place);
+                                    sendMessageToFirebase(friendlyMessage);
+                                    //Place place = PlacePicker.getPlace(data, this);
+
+                                }
+
+                            } else {
+                                Log.w(TAG, "Image upload task was not successful.",
+                                        task.getException());
                             }
-
-                            sendMessageToFirebase(friendlyMessage);
-
-                        } else {
-                            Log.w(TAG, "Image upload task was not successful.",
-                                    task.getException());
                         }
+
                     }
                 });
     }
-
     public  void roomChooser() {
 
         final String room_type_1 = mFirebaseUser.getUid() + "_" + mReceiver;

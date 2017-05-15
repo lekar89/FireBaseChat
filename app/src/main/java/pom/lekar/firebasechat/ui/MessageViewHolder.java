@@ -2,9 +2,15 @@ package pom.lekar.firebasechat.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import android.widget.VideoView;
+
+import com.google.android.gms.maps.MapView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pom.lekar.firebasechat.R;
@@ -15,19 +21,31 @@ import pom.lekar.firebasechat.R;
 
 public class MessageViewHolder extends RecyclerView.ViewHolder {
 
+    public  WebView         messengerWebView;
     public  TextView        messageTextView;
     public  TextView        messengerTextView;
     public  ImageView       messageImageView;
     public  VideoView       messageVideoView;
+    public  ToggleButton    messengerPlayButton;
+    public  MediaController messengerPlayer;
     public  CircleImageView messengerImageView;
+    public  LinearLayout messengerLinearLayout;
+    public MapView messengerMapView;
+
+
 
     public MessageViewHolder(View v) {
         super(v);
-        messageTextView    = (TextView)         itemView.findViewById(R.id.messageTextView);
-        messageImageView   = (ImageView)        itemView.findViewById(R.id.messageImageView);
-        messageVideoView   = (VideoView)        itemView.findViewById(R.id.messageVideoView);
-        messengerTextView  = (TextView)         itemView.findViewById(R.id.messengerTextView);
-        messengerImageView = (CircleImageView)  itemView.findViewById(R.id.messengerImageView);
+        messageTextView     = (TextView)         itemView.findViewById(R.id.messageTextView);
+        messageImageView    = (ImageView)        itemView.findViewById(R.id.messageImageView);
+        messageVideoView    = (VideoView)        itemView.findViewById(R.id.messageVideoView);
+        messengerTextView   = (TextView)         itemView.findViewById(R.id.messengerTextView);
+        messengerImageView  = (CircleImageView)  itemView.findViewById(R.id.messengerImageView);
+        messengerPlayer     = (MediaController)  itemView.findViewById(R.id.message_audio_controller);
+        messengerPlayButton = (ToggleButton)     itemView.findViewById(R.id.message_play_button);
+        messengerWebView    = (WebView)          itemView.findViewById(R.id.message_veb_view);
+        messengerLinearLayout   = (LinearLayout)   itemView.findViewById(R.id.message_layout_for_web);
+        messengerMapView   = (MapView)   itemView.findViewById(R.id.message_map);
     }
 
 }

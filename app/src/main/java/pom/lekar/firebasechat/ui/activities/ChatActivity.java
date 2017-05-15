@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,7 +28,9 @@ import pom.lekar.firebasechat.models.FriendlyMessage;
 import pom.lekar.firebasechat.utils.Utils;
 
 import static pom.lekar.firebasechat.Constants.ANONYMOUS;
+import static pom.lekar.firebasechat.Constants.REQUEST_AUDIO;
 import static pom.lekar.firebasechat.Constants.REQUEST_IMAGE;
+import static pom.lekar.firebasechat.Constants.REQUEST_LOCATION;
 import static pom.lekar.firebasechat.Constants.REQUEST_VIDEO;
 
 //jamDroidFireChat
@@ -38,6 +42,7 @@ public class ChatActivity extends AppCompatActivity
     //написать интефейчсы
     private static final String TAG = "ChatActyvity";
 
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
@@ -47,8 +52,10 @@ public class ChatActivity extends AppCompatActivity
 
     private Button    mSendButton;
     private EditText  mMessageEditText;
-    private ImageView mAddMessageImageView;
-    private ImageView mAddMessageVideoView;
+    private ImageView mAddMessageImage;
+    private ImageView mAddMessageVideo;
+    private ImageView mAddMessageAudio;
+    private ImageView mAddMessageLocation;
 
     private Utils mUtils;
 
@@ -61,15 +68,20 @@ public class ChatActivity extends AppCompatActivity
 
         mSendButton          = (Button) findViewById(R.id.sendButton);
         mMessageEditText     = (EditText) findViewById(R.id.messageEditText);
-        mAddMessageVideoView = (ImageView) findViewById(R.id.addMessageVideo);
-        mAddMessageImageView = (ImageView) findViewById(R.id.addMessageImageView);
+        mAddMessageVideo = (ImageView) findViewById(R.id.addMessageVideo);
+        mAddMessageImage = (ImageView) findViewById(R.id.addMessageImage);
+        mAddMessageAudio = (ImageView) findViewById(R.id.addMessageAudio);
+        mAddMessageLocation = (ImageView) findViewById(R.id.addMessageLocation);
 
         mSendButton.         setOnClickListener(this);
-        mAddMessageVideoView.setOnClickListener(this);
-        mAddMessageImageView.setOnClickListener(this);
+        mAddMessageVideo.setOnClickListener(this);
+        mAddMessageImage.setOnClickListener(this);
+        mAddMessageAudio.setOnClickListener(this);
+        mAddMessageLocation.setOnClickListener(this);
 
         mUtils        = new Utils( this,  mReceiver, ChatActivity.this);
         mReceiver     = getIntent().getStringExtra(Constants.EXTRA_ID);
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
@@ -105,8 +117,9 @@ public class ChatActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
 
-        if (requestCode == REQUEST_IMAGE || requestCode == REQUEST_VIDEO) {
-            if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE || requestCode == REQUEST_VIDEO ||requestCode ==REQUEST_AUDIO) {
+
                 if (data != null) {
                     Uri uri = data.getData();
                     Log.d(TAG, "Uri: " + uri.toString());
@@ -114,7 +127,19 @@ public class ChatActivity extends AppCompatActivity
                     mUtils.sendFileMessage(uri, requestCode);
                 }
             }
+            // GoogleMap mMap
+            if (requestCode == REQUEST_LOCATION) {
+                Place place = PlacePicker.getPlace(data, this);
+                //Place place = PlacePicker.getPlace(this,data);
+                Toast.makeText(this, String.valueOf(place.getLatLng().latitude), Toast.LENGTH_SHORT).show();
+
+                FriendlyMessage message = new FriendlyMessage ( mUsername,mPhotoUrl);
+                message.setLatLong(String.valueOf(place.getLatLng().latitude)+"_"+String.valueOf(place.getLatLng().longitude));
+
+                mUtils.sendMessageToFirebase(message);
+            }
         }
+
     }
 
 
@@ -169,13 +194,32 @@ public class ChatActivity extends AppCompatActivity
                 Toast.makeText(this, "video", Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.addMessageImageView:
+            case R.id.addMessageImage:
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
                 startActivityForResult(intent, REQUEST_IMAGE);
                 Toast.makeText(this, "image", Toast.LENGTH_SHORT).show();
                 break;
+
+            case R.id.addMessageAudio:
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("audio/*");
+                startActivityForResult(intent, REQUEST_AUDIO);
+                Toast.makeText(this, "audio", Toast.LENGTH_SHORT).show();
+                break;
+
+           case R.id.addMessageLocation:
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(this), REQUEST_LOCATION);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+
+
         }
     }
 }
