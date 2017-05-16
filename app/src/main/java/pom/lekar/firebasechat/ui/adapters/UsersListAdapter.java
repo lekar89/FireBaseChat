@@ -60,8 +60,8 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.User
 
         holder.personName.setText(mUsers.get(position).getName());
 
-        Picasso.with(mContext) //передаем контекст приложения
-                .load(mUsers.get(position).getPhotoUrl() ) //адрес изображения
+        Picasso.with(mContext)
+                .load(mUsers.get(position).getPhotoUrl() )
                 .into(holder.personPhoto);
 
         holder.mRelativeLayout.setOnClickListener(new View.OnClickListener() {
