@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FireBaseChat</string>
+    <string name="yootoube_key">AIzaSyBA1kCSACnQ1MqumnemidYXng0k0iZiuCE</string>
+    <string name="map_static_url" translatable="false"><![CDATA[http://maps.google.com/maps/api/staticmap?markers=%1$s,%2$s&zoom=15&size=360x360&scale=2]]></string>
 </resources>

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,13 +17,10 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -55,6 +53,7 @@ public class MessageShower {
     private  LinearLayoutManager mLinearLayoutManager;
     private  DatabaseReference   mFirebaseDatabaseReference;
     private  FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder>  mFirebaseAdapter;
+
 
     public MessageShower(Context mContext, ChatActivity mChatActivity) {
 
@@ -116,7 +115,7 @@ public class MessageShower {
                     setAudio(friendlyMessage,viewHolder);
 
                 }else if (friendlyMessage.getLatLong() != null) {
-                    //setLocation(friendlyMessage, viewHolder);
+                    setLocation(friendlyMessage, viewHolder);
 
 
                 }
@@ -129,28 +128,30 @@ public class MessageShower {
 
 
 
-    private void setLocation(FriendlyMessage mFriendlyMessage, MessageViewHolder mViewHolder) {
-        GoogleMap map;
+    private void setLocation(FriendlyMessage mFriendlyMessage, MessageViewHolder viewHolder) {
+
+        final String[] latLon = mFriendlyMessage.getLatLong().split("!",2);
+
+        Glide.with(viewHolder.messageImageView.getContext())
+                .load(viewHolder.messageImageView.getContext().getString(R.string.map_static_url,
+                        latLon[0], latLon[1]))
+                .into(viewHolder.messageImageView);
 
 
-        mViewHolder.messengerMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mGoogleMap) {
 
-            }
-        });
-        mViewHolder.messengerMapView.setVisibility(View.VISIBLE);
-//        map = mapView.getMapAsync();
-//
-//        map.getUiSettings().setMyLocationButtonEnabled(false);
-//        map.setMyLocationEnabled(true);
+        viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
+        viewHolder.messengerMapView.setVisibility(View.GONE);
+        viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
+        viewHolder.messageVideoView.setVisibility(VideoView.GONE);
+
+        viewHolder.messageTextView.setVisibility(TextView.GONE);
+        viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
     }
 
 
     private void setAudio(FriendlyMessage friendlyMessage,MessageViewHolder viewHolder){
 
         isPlaing= false;
-
 
         final MediaPlayer mp = new MediaPlayer();
         try {
@@ -176,8 +177,8 @@ public class MessageShower {
                 }
             }
         });
+        // viewHolder.messengerMapView.setVisibility(View.GONE);
         viewHolder.messengerMapView.setVisibility(View.GONE);
-
         viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
         viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
@@ -210,6 +211,18 @@ public class MessageShower {
                     return true;
                 }
             }
+
+            viewHolder.messengerWebView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if  (event.getAction() == MotionEvent.ACTION_UP) {
+                        Intent openlinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(friendlyMessage.getText()));
+                        mContext.startActivity(openlinkIntent);
+                        return false;
+                    }
+                    return false;
+                }
+            });
             //viewHolder.messengerWebView.getSettings().setJavaScriptEnabled(true);
             viewHolder.messengerWebView.loadUrl(friendlyMessage.getText());
             viewHolder.messengerWebView.setWebViewClient(new MyWebViewClient());
@@ -220,29 +233,42 @@ public class MessageShower {
             viewHolder.messengerLinearLayout.setVisibility(TextView.VISIBLE);
             viewHolder.messengerWebView.setVisibility(TextView.VISIBLE);
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
+            viewHolder.messengerMapView.setVisibility(View.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
             viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
 
-            viewHolder.messengerWebView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(mContext, "YBхуя ", Toast.LENGTH_SHORT).show();
-                    Intent openlinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(friendlyMessage.getText()));
-                    mContext.startActivity(openlinkIntent);
-                }
-            });
+
+            viewHolder.messengerPlayButton.setVerticalScrollBarEnabled(true);
+
+
         } else {
             viewHolder.messageTextView.setText(friendlyMessage.getText());
 
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
+            viewHolder.messengerMapView.setVisibility(View.GONE);
             viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
             viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         }
     }
-    private void setVideo(FriendlyMessage friendlyMessage, MessageViewHolder viewHolder) {
+    private void setVideo(final FriendlyMessage friendlyMessage, MessageViewHolder viewHolder) {
+
+//        YouTubePlayerView youTubePlayerView;
+//        YouTubePlayer.OnInitializedListener  onInitializedListener = new YouTubePlayer.OnInitializedListener() {
+//            @Override
+//            public void onInitializationSuccess(YouTubePlayer.Provider mProvider, YouTubePlayer youTubePlayerView, boolean mB) {
+//                //youTubePlayerView.loadVideo(friendlyMessage.getPhotoUrl());
+//                youTubePlayerView.loadVideo("a4NT5iBFuZs");
+//            }
+//
+//            @Override
+//            public void onInitializationFailure(YouTubePlayer.Provider mProvider, YouTubeInitializationResult mYouTubeInitializationResult) {
+//
+//            }
+//        };
+//        viewHolder.youTubePlayerView.initialize("AIzaSyBA1kCSACnQ1MqumnemidYXng0k0iZiuCE",onInitializedListener);
 
         viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
         viewHolder.messageVideoView.setMediaController(new MediaController(mContext));
@@ -250,6 +276,7 @@ public class MessageShower {
         //viewHolder.messageVideoView.start();
 
         viewHolder.messageVideoView.setVisibility(VideoView.VISIBLE);
+        viewHolder.messengerMapView.setVisibility(View.GONE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
@@ -287,6 +314,7 @@ public class MessageShower {
         }
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
+        viewHolder.messengerMapView.setVisibility(View.GONE);
         viewHolder.messageVideoView.setVisibility(ImageView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
@@ -318,4 +346,5 @@ public class MessageShower {
         });
 
     }
+
 }

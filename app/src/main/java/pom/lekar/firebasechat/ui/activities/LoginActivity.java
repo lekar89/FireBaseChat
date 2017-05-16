@@ -1,6 +1,6 @@
 package pom.lekar.firebasechat.ui.activities;
 
-import android.app.ProgressDialog;
+    import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;

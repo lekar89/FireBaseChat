@@ -42,40 +42,43 @@
                 android:layout_width="250dp"
                 android:layout_height="250dp"
                 android:adjustViewBounds="true"
-
                 android:scaleType="fitCenter"
                 />
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/message_map"
+                android:layout_width="match_parent"
+                android:layout_height="450dp"/>
             <LinearLayout
                 android:id="@+id/message_layout_for_web"
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
 
                 <WebView
-                    android:id="@+id/message_veb_view"
+                    android:id="@+id/message_web_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+
             </LinearLayout>
             <MediaController
                 android:id="@+id/message_audio_controller"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
-
-            </MediaController>
+                />
 
             <ToggleButton
                 android:id="@+id/message_play_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="stop"
-                android:textOn="playing"
+                android:textOff="play audio"
+                android:textOn="stop audio"
                 android:src="@mipmap/ic_play"
                 />
+            <!--<com.google.android.youtube.player.YouTubePlayerView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/messengerYoutube">-->
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/message_map"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            <!--</com.google.android.youtube.player.YouTubePlayerView>-->
 
             <TextView
                 android:id="@+id/messengerTextView"
@@ -86,5 +89,12 @@
         </LinearLayout>
 
     </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
 </LinearLayout>

@@ -35,11 +35,13 @@ import static pom.lekar.firebasechat.Constants.REQUEST_VIDEO;
 
 //jamDroidFireChat
 public class ChatActivity extends AppCompatActivity
+//                        extends   YouTubeBaseActivity
         implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     ///Вынести логиуку в Адаптеры
     /// Андроид когд стаил
     //написать интефейчсы
+
     private static final String TAG = "ChatActyvity";
 
 
@@ -56,6 +58,7 @@ public class ChatActivity extends AppCompatActivity
     private ImageView mAddMessageVideo;
     private ImageView mAddMessageAudio;
     private ImageView mAddMessageLocation;
+    private ImageView mAddMessage;
 
     private Utils mUtils;
 
@@ -63,7 +66,8 @@ public class ChatActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R
+                .layout.activity_chat);
         setTitle(getIntent().getStringExtra(Constants.EXTRA_USER_NAME));
 
         mSendButton          = (Button) findViewById(R.id.sendButton);
@@ -73,7 +77,7 @@ public class ChatActivity extends AppCompatActivity
         mAddMessageAudio = (ImageView) findViewById(R.id.addMessageAudio);
         mAddMessageLocation = (ImageView) findViewById(R.id.addMessageLocation);
 
-        mSendButton.         setOnClickListener(this);
+        mSendButton.     setOnClickListener(this);
         mAddMessageVideo.setOnClickListener(this);
         mAddMessageImage.setOnClickListener(this);
         mAddMessageAudio.setOnClickListener(this);
@@ -95,10 +99,6 @@ public class ChatActivity extends AppCompatActivity
 
     }//end of onCreate
 
-    /**
-     * Constructs a new String by converting the specified array of
-     * bytes using the platform's default character encoding.
-     */
     private void setPhtoto() {
         if (mFirebaseUser.getPhotoUrl() != null) {
             mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
@@ -127,14 +127,13 @@ public class ChatActivity extends AppCompatActivity
                     mUtils.sendFileMessage(uri, requestCode);
                 }
             }
-            // GoogleMap mMap
+
             if (requestCode == REQUEST_LOCATION) {
                 Place place = PlacePicker.getPlace(data, this);
                 //Place place = PlacePicker.getPlace(this,data);
-                Toast.makeText(this, String.valueOf(place.getLatLng().latitude), Toast.LENGTH_SHORT).show();
 
                 FriendlyMessage message = new FriendlyMessage ( mUsername,mPhotoUrl);
-                message.setLatLong(String.valueOf(place.getLatLng().latitude)+"_"+String.valueOf(place.getLatLng().longitude));
+                message.setLatLong(String.valueOf(place.getLatLng().latitude)+"!"+String.valueOf(place.getLatLng().longitude));
 
                 mUtils.sendMessageToFirebase(message);
             }

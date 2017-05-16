@@ -10,10 +10,13 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.VideoView;
 
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
+import com.google.android.youtube.player.YouTubePlayerView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pom.lekar.firebasechat.R;
+
 
 /**
  * Created by lekar on 12.05.17.
@@ -31,6 +34,8 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     public  CircleImageView messengerImageView;
     public  LinearLayout messengerLinearLayout;
     public MapView messengerMapView;
+    public YouTubePlayerView youTubePlayerView;
+    MapFragment mMapFragment;
 
 
 
@@ -43,9 +48,10 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         messengerImageView  = (CircleImageView)  itemView.findViewById(R.id.messengerImageView);
         messengerPlayer     = (MediaController)  itemView.findViewById(R.id.message_audio_controller);
         messengerPlayButton = (ToggleButton)     itemView.findViewById(R.id.message_play_button);
-        messengerWebView    = (WebView)          itemView.findViewById(R.id.message_veb_view);
+        messengerWebView    = (WebView)          itemView.findViewById(R.id.message_web_view);
         messengerLinearLayout   = (LinearLayout)   itemView.findViewById(R.id.message_layout_for_web);
         messengerMapView   = (MapView)   itemView.findViewById(R.id.message_map);
+       // youTubePlayerView   = (YouTubePlayerView)   itemView.findViewById(R.id.messengerYoutube);
     }
 
 }
