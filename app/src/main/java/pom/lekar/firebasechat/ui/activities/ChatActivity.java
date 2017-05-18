@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,17 +34,14 @@ import static pom.lekar.firebasechat.Constants.REQUEST_IMAGE;
 import static pom.lekar.firebasechat.Constants.REQUEST_LOCATION;
 import static pom.lekar.firebasechat.Constants.REQUEST_VIDEO;
 
-//jamDroidFireChat
+
 public class ChatActivity extends AppCompatActivity
 //                        extends   YouTubeBaseActivity
         implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
-    ///Вынести логиуку в Адаптеры
-    /// Андроид когд стаил
-    //написать интефейчсы
+
 
     private static final String TAG = "ChatActyvity";
-
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -52,13 +50,14 @@ public class ChatActivity extends AppCompatActivity
     private String mPhotoUrl;
     private String mReceiver;
 
-    private Button    mSendButton;
-    private EditText  mMessageEditText;
-    private ImageView mAddMessageImage;
-    private ImageView mAddMessageVideo;
-    private ImageView mAddMessageAudio;
-    private ImageView mAddMessageLocation;
-    private ImageView mAddMessage;
+    private Button      mSendButton;
+    private EditText    mMessageEditText;
+    private ImageView   mAddMessageImage;
+    private ImageView   mAddMessageVideo;
+    private ImageView   mAddMessageAudio;
+    private ImageView   mAddMessageLocation;
+    private ImageView   mAddMessage;
+    private LinearLayout mLinearLayoutUP;
 
     private Utils mUtils;
 
@@ -66,31 +65,36 @@ public class ChatActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R
-                .layout.activity_chat);
+        setContentView(R.layout.activity_chat);
         setTitle(getIntent().getStringExtra(Constants.EXTRA_USER_NAME));
 
-        mSendButton          = (Button) findViewById(R.id.sendButton);
-        mMessageEditText     = (EditText) findViewById(R.id.messageEditText);
-        mAddMessageVideo = (ImageView) findViewById(R.id.addMessageVideo);
-        mAddMessageImage = (ImageView) findViewById(R.id.addMessageImage);
-        mAddMessageAudio = (ImageView) findViewById(R.id.addMessageAudio);
-        mAddMessageLocation = (ImageView) findViewById(R.id.addMessageLocation);
+        mSendButton         = (Button)       findViewById(R.id.sendButton);
+        mMessageEditText    = (EditText)     findViewById(R.id.messageEditText);
+        mAddMessageVideo    = (ImageView)    findViewById(R.id.addMessageVideo);
+        mAddMessageImage    = (ImageView)    findViewById(R.id.addMessageImage);
+        mAddMessageAudio    = (ImageView)    findViewById(R.id.addMessageAudio);
+        mAddMessageLocation = (ImageView)    findViewById(R.id.addMessageLocation);
+        mAddMessage         = (ImageView)    findViewById(R.id.addContent);
+        mLinearLayoutUP     = (LinearLayout) findViewById(R.id.linearLayoutUP);
 
-        mSendButton.     setOnClickListener(this);
-        mAddMessageVideo.setOnClickListener(this);
-        mAddMessageImage.setOnClickListener(this);
-        mAddMessageAudio.setOnClickListener(this);
+
+
+        mSendButton        .setOnClickListener(this);
+        mAddMessage        .setOnClickListener(this);
+        mAddMessageVideo   .setOnClickListener(this);
+        mAddMessageImage   .setOnClickListener(this);
+        mAddMessageAudio   .setOnClickListener(this);
         mAddMessageLocation.setOnClickListener(this);
 
-        mUtils        = new Utils( this,  mReceiver, ChatActivity.this);
+
+        mUtils        = new Utils(this,  mReceiver, ChatActivity.this);
         mReceiver     = getIntent().getStringExtra(Constants.EXTRA_ID);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         mUtils.buttonShow(mMessageEditText, mSendButton);
-        mUtils.isUserAuth( mFirebaseUser);
+        mUtils.isUserAuth(mFirebaseUser);
         mUtils.roomChooser();
 
         mUsername = mFirebaseUser.getDisplayName();
@@ -127,15 +131,15 @@ public class ChatActivity extends AppCompatActivity
                     mUtils.sendFileMessage(uri, requestCode);
                 }
             }
-
             if (requestCode == REQUEST_LOCATION) {
                 Place place = PlacePicker.getPlace(data, this);
                 //Place place = PlacePicker.getPlace(this,data);
 
                 FriendlyMessage message = new FriendlyMessage ( mUsername,mPhotoUrl);
-                message.setLatLong(String.valueOf(place.getLatLng().latitude)+"!"+String.valueOf(place.getLatLng().longitude));
+                message.setLatLong(String.valueOf(place.getLatLng().latitude)+"!"
+                        +String.valueOf(place.getLatLng().longitude));
 
-                mUtils.sendMessageToFirebase(message);
+                mUtils.sendMessageToFireBase(message);
             }
         }
 
@@ -152,7 +156,6 @@ public class ChatActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.user_list:
                 startActivity(new Intent(ChatActivity.this, UserListActivity.class));
                 return true;
@@ -181,8 +184,16 @@ public class ChatActivity extends AppCompatActivity
                 FriendlyMessage friendlyMessage = new FriendlyMessage
                         (mMessageEditText.getText().toString(), mUsername,
                                 mPhotoUrl, null, null);
-                mUtils.sendMessageToFirebase(friendlyMessage);
+                mUtils.sendMessageToFireBase(friendlyMessage);
                 mMessageEditText.setText("");
+                break;
+
+            case R.id.addContent:
+                if(mLinearLayoutUP.getVisibility()==View.VISIBLE){
+                    mLinearLayoutUP.setVisibility(View.GONE);
+                }else {
+                    mLinearLayoutUP.setVisibility(View.VISIBLE);
+                }
                 break;
 
             case R.id.addMessageVideo:
@@ -192,6 +203,7 @@ public class ChatActivity extends AppCompatActivity
                 startActivityForResult(intent, REQUEST_VIDEO);
                 Toast.makeText(this, "video", Toast.LENGTH_SHORT).show();
                 break;
+
 
             case R.id.addMessageImage:
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -209,7 +221,7 @@ public class ChatActivity extends AppCompatActivity
                 Toast.makeText(this, "audio", Toast.LENGTH_SHORT).show();
                 break;
 
-           case R.id.addMessageLocation:
+            case R.id.addMessageLocation:
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
                     startActivityForResult(builder.build(this), REQUEST_LOCATION);
@@ -217,8 +229,6 @@ public class ChatActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
                 break;
-
-
         }
     }
 }

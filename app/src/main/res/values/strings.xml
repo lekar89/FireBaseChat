@@ -2,4 +2,9 @@
     <string name="app_name">FireBaseChat</string>
     <string name="yootoube_key">AIzaSyBA1kCSACnQ1MqumnemidYXng0k0iZiuCE</string>
     <string name="map_static_url" translatable="false"><![CDATA[http://maps.google.com/maps/api/staticmap?markers=%1$s,%2$s&zoom=15&size=360x360&scale=2]]></string>
+    <string name="type_a_message">Type a message...</string>
+    <string name="image">Image</string>
+    <string name="play_message">play message</string>
+    <string name="stop">stop</string>
+    <string name="send">SEND</string>
 </resources>

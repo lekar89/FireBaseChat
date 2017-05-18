@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/padding_small"
+    android:paddingEnd="@dimen/padding_avg"
+    android:paddingStart="@dimen/padding_avg"
+    android:paddingTop="@dimen/padding_small">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:gravity="end"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -17,18 +26,24 @@
             android:src="@android:drawable/ic_menu_myplaces"/>
 
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/chat_rounded_rect_bg"
+            android:padding="@dimen/padding_small">
 
             <TextView
                 android:id="@+id/messageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
+                android:layout_marginStart="@dimen/padding_small"
+
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/grey_300"
+                tools:text="Noice man !"/>
 
             <ImageView
                 android:id="@+id/messageImageView"
@@ -36,18 +51,16 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:background="@color/colorPrimary"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/image"/>
             <VideoView
                 android:id="@+id/messageVideoView"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 />
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/message_map"
-                android:layout_width="match_parent"
-                android:layout_height="450dp"/>
+
             <LinearLayout
                 android:id="@+id/message_layout_for_web"
                 android:layout_width="match_parent"
@@ -59,6 +72,7 @@
                     android:layout_height="wrap_content"/>
 
             </LinearLayout>
+
             <MediaController
                 android:id="@+id/message_audio_controller"
                 android:layout_width="match_parent"
@@ -69,21 +83,19 @@
                 android:id="@+id/message_play_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="play audio"
-                android:textOn="stop audio"
-                android:src="@mipmap/ic_play"
-                />
+                android:textOff="@string/play_message"
+                android:textOn="@string/stop"
+                              />
             <!--<com.google.android.youtube.player.YouTubePlayerView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:id="@+id/messengerYoutube">-->
-
             <!--</com.google.android.youtube.player.YouTubePlayerView>-->
 
             <TextView
                 android:id="@+id/messengerTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="0"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
         </LinearLayout>
@@ -94,7 +106,6 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:visibility="gone"/>
 
 </LinearLayout>

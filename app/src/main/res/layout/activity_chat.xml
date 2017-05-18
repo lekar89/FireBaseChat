@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/grey_300"
     tools:context=".ui.activities.ChatActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -16,7 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout"/>
+
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/linearLayoutUP"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             ads:srcCompat="@mipmap/ic_add_photo"/>
+
         <ImageView
             android:id="@+id/addMessageVideo"
             android:layout_width="wrap_content"
@@ -47,9 +51,6 @@
             android:layout_height="match_parent"
             ads:srcCompat="@mipmap/ic_location"/>
 
-
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -66,23 +67,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             ads:srcCompat="@mipmap/c_plus"/>
-        <!--<ImageView-->
-            <!--android:id="@+id/addMessageVideo"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--ads:srcCompat="@mipmap/ic_send_video"/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/addMessageAudio"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--ads:srcCompat="@mipmap/ic_audio"/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/addMessageLocation"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--ads:srcCompat="@mipmap/ic_location"/>-->
 
         <EditText
+            android:radius="4dp"
+            android:maxLines="1"
+            android:hint="@string/type_a_message"
             android:id="@+id/messageEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -95,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:enabled="false"
-            android:text="SEND"/>
+            android:text="@string/send"/>
 
     </LinearLayout>
 

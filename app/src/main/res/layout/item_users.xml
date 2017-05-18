@@ -3,7 +3,12 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-    android:id="@+id/conteiner_user_item">
+                android:id="@+id/conteiner_user_item"
+                android:paddingBottom="@dimen/padding_small"
+                android:paddingEnd="@dimen/padding_avg"
+                android:paddingStart="@dimen/padding_avg"
+
+    >
 
 
     <de.hdodenhof.circleimageview.CircleImageView

@@ -1,5 +1,6 @@
 package pom.lekar.firebasechat.utils;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
@@ -40,12 +42,10 @@ import pom.lekar.firebasechat.ui.activities.ChatActivity;
 
 import static com.google.android.gms.internal.zzt.TAG;
 
-/**
- * Created by lekar on 13.05.17.
- */
+
 
 public class MessageShower {
-    boolean isPlaing;
+    private  boolean             mIsPlaing;
     private  Context             mContext;
     private  ProgressBar         mProgressBar;
     private  ChatActivity        mChatActivity;
@@ -117,7 +117,6 @@ public class MessageShower {
                 }else if (friendlyMessage.getLatLong() != null) {
                     setLocation(friendlyMessage, viewHolder);
 
-
                 }
 
             }
@@ -137,52 +136,64 @@ public class MessageShower {
                         latLon[0], latLon[1]))
                 .into(viewHolder.messageImageView);
 
-
-
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
-        viewHolder.messengerMapView.setVisibility(View.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         viewHolder.messageVideoView.setVisibility(VideoView.GONE);
-
         viewHolder.messageTextView.setVisibility(TextView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+        viewHolder.messageImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q="+latLon[0]+","+latLon[1]);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(mChatActivity.getPackageManager()) != null) {
+                    mChatActivity.startActivity(mapIntent);
+                }
+            }
+        });
+
     }
 
 
-    private void setAudio(FriendlyMessage friendlyMessage,MessageViewHolder viewHolder){
+    private void setAudio(FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder){
 
-        isPlaing= false;
+        mIsPlaing = false;
+
 
         final MediaPlayer mp = new MediaPlayer();
         try {
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mp.setDataSource(friendlyMessage.getAudioUrl());
             mp.prepareAsync();
-            //mp.start();
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         viewHolder.messengerPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isPlaing) {
-
+                if(!mIsPlaing) {
                     mp.start();
-                    isPlaing = true;
-                }else if(isPlaing){
+                    mIsPlaing = true;
+                }else if(mIsPlaing){
                     mp.pause();
-                    isPlaing=false;
-
+                    mIsPlaing =false;
                 }
             }
         });
-        // viewHolder.messengerMapView.setVisibility(View.GONE);
-        viewHolder.messengerMapView.setVisibility(View.GONE);
-        viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
+
+        viewHolder.messageTextView.setText("You have audio message");
+        viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
         viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
-        viewHolder.messageTextView.setVisibility(TextView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
 
     }
@@ -202,7 +213,7 @@ public class MessageShower {
     private void setText(final FriendlyMessage friendlyMessage, MessageViewHolder viewHolder) {
 
 
-        if (isLic(friendlyMessage.getText())) {
+        if (isLik(friendlyMessage.getText())) {
 
             class MyWebViewClient extends WebViewClient {
                 @Override
@@ -216,37 +227,30 @@ public class MessageShower {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if  (event.getAction() == MotionEvent.ACTION_UP) {
-                        Intent openlinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(friendlyMessage.getText()));
-                        mContext.startActivity(openlinkIntent);
+                        Intent openLinkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(friendlyMessage.getText()));
+                        mContext.startActivity(openLinkIntent);
                         return false;
                     }
                     return false;
                 }
             });
-            //viewHolder.messengerWebView.getSettings().setJavaScriptEnabled(true);
             viewHolder.messengerWebView.loadUrl(friendlyMessage.getText());
             viewHolder.messengerWebView.setWebViewClient(new MyWebViewClient());
-
-
             viewHolder.messageTextView.setText(Uri.parse(friendlyMessage.getText()).getAuthority());
 
             viewHolder.messengerLinearLayout.setVisibility(TextView.VISIBLE);
             viewHolder.messengerWebView.setVisibility(TextView.VISIBLE);
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
-            viewHolder.messengerMapView.setVisibility(View.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
             viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
 
 
-            viewHolder.messengerPlayButton.setVerticalScrollBarEnabled(true);
-
 
         } else {
             viewHolder.messageTextView.setText(friendlyMessage.getText());
-
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
-            viewHolder.messengerMapView.setVisibility(View.GONE);
+
             viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
             viewHolder.messageVideoView.setVisibility(ImageView.GONE);
@@ -270,20 +274,33 @@ public class MessageShower {
 //        };
 //        viewHolder.youTubePlayerView.initialize("AIzaSyBA1kCSACnQ1MqumnemidYXng0k0iZiuCE",onInitializedListener);
 
+
+
+        MediaController mediacontroller = new MediaController(mChatActivity);
         viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
-        viewHolder.messageVideoView.setMediaController(new MediaController(mContext));
-        viewHolder.messageVideoView.requestFocus();
-        //viewHolder.messageVideoView.start();
+        mediacontroller.setAnchorView( viewHolder.messageVideoView);
+        mediacontroller.setAnchorView( viewHolder.messageVideoView);
+
+        viewHolder.messageVideoView.setMediaController(mediacontroller);
+
+        viewHolder.messageVideoView.start();
+//
+//        viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
+//        viewHolder.messageVideoView.setMediaController(new MediaController(mContext));
+//
+//        viewHolder.messageVideoView.requestFocus();
+
 
         viewHolder.messageVideoView.setVisibility(VideoView.VISIBLE);
-        viewHolder.messengerMapView.setVisibility(View.GONE);
+
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+
     }
 
-    private void setImage(FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder) {
+    private void setImage(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder) {
 
         String imageUrl = friendlyMessage.getImageUrl();
 
@@ -314,12 +331,38 @@ public class MessageShower {
         }
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
-        viewHolder.messengerMapView.setVisibility(View.GONE);
+
         viewHolder.messageVideoView.setVisibility(ImageView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+
+
+        viewHolder.messageImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                View imgEntryView = inflater.inflate(R.layout.dialog_item, null);
+
+                final Dialog dialog=new Dialog(mContext,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                ImageView img = (ImageView) imgEntryView
+                        .findViewById(R.id.dialog_image);
+                Glide.with(viewHolder.messageImageView.getContext())
+                        .load(friendlyMessage.getImageUrl())
+                        .into(img);
+
+                dialog.setContentView(imgEntryView);
+                dialog.show();
+
+                imgEntryView.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View paramView) {
+                        dialog.cancel();
+                    }
+                });
+            }
+        });
     }
-    private boolean isLic(String  text){
+
+    private boolean isLik(String text){
 
         String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
 
@@ -327,6 +370,7 @@ public class MessageShower {
         Matcher m = p.matcher(text);//replace with string to compare
         return m.find();
     }
+
     private void scrollToLastMessage(){
         mFirebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             //Show last message
