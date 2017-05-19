@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import pom.lekar.firebasechat.Constants;
+import pom.lekar.firebasechat.R;
 import pom.lekar.firebasechat.models.FriendlyMessage;
 import pom.lekar.firebasechat.ui.activities.ChatActivity;
 import pom.lekar.firebasechat.ui.activities.LoginActivity;
@@ -259,7 +260,7 @@ public class Utils {
         initialize();
     }
 
-    public Utils( Context mContext) {
+    public Utils(Context mContext) {
         this.mContext = mContext;
     }
 
@@ -343,7 +344,8 @@ public class Utils {
                                     .child(Constants.ARG_ROOMS)
                                     .child(room_type_1)
                                     .push()
-                                    .setValue(new FriendlyMessage("","","","",""));
+                                    .setValue(
+                                            new FriendlyMessage(" Hi send you message ","","","",""));
 
                             mMessageShower.showMessage(room_type_1);
                         }

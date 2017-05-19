@@ -1,6 +1,8 @@
 package pom.lekar.firebasechat.models;
 
 
+import java.text.SimpleDateFormat;
+
 public class FriendlyMessage {
     private String id;
     private String text;
@@ -10,8 +12,14 @@ public class FriendlyMessage {
     private String videoUrl;
     private String audioUrl;
     private String latLong;
-    public FriendlyMessage() {
+    private String time;
+
+    public void setTime(String mTime) {
+        time = mTime;
     }
+
+    public FriendlyMessage() {
+           }
 
     public String getLatLong() {
         return latLong;
@@ -24,6 +32,7 @@ public class FriendlyMessage {
     public FriendlyMessage(String name, String photoUrl) {
         this.name     = name;
         this.photoUrl = photoUrl;
+        setCurrentTime();
     }
 
     public FriendlyMessage(String text, String name, String photoUrl, String imageUrl,String videoUrl) {
@@ -32,6 +41,8 @@ public class FriendlyMessage {
         this.photoUrl = photoUrl;
         this.imageUrl = imageUrl;
         this.videoUrl = videoUrl;
+        setCurrentTime();
+
     }
 
     public String getId() {
@@ -90,7 +101,15 @@ public class FriendlyMessage {
         audioUrl = mAudioUrl;
     }
 
+    public String getTime() {
+        return time;
+    }
 
+    private void setCurrentTime() {
+
+        SimpleDateFormat time_formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        time = time_formatter.format(System.currentTimeMillis());
+    }
 
 
 

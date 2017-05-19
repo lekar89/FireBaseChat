@@ -3,9 +3,10 @@ package pom.lekar.firebasechat.utils;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -31,12 +31,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import pom.lekar.firebasechat.Constants;
 import pom.lekar.firebasechat.R;
 import pom.lekar.firebasechat.models.FriendlyMessage;
+import pom.lekar.firebasechat.ui.Dialogs.DialogAudio;
+import pom.lekar.firebasechat.ui.Dialogs.DialogMap;
+import pom.lekar.firebasechat.ui.Dialogs.DialogVideo;
 import pom.lekar.firebasechat.ui.MessageViewHolder;
 import pom.lekar.firebasechat.ui.activities.ChatActivity;
 
@@ -100,6 +109,7 @@ public class MessageShower {
 
                 mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 viewHolder.messengerTextView.setText(friendlyMessage.getName());
+                viewHolder.messengerTime.setText(friendlyMessage.getTime());
                 setUserPhoto(friendlyMessage,viewHolder);
 
                 if (friendlyMessage.getText() != null) {
@@ -121,6 +131,7 @@ public class MessageShower {
 
             }
         };
+
         scrollToLastMessage();
         mMessageRecyclerView.setAdapter(mFirebaseAdapter);
     }
@@ -138,61 +149,95 @@ public class MessageShower {
 
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
-        viewHolder.messageVideoView.setVisibility(VideoView.GONE);
+       // viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
         viewHolder.messageImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri gmmIntentUri = Uri.parse("geo:0,0?q="+latLon[0]+","+latLon[1]);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                if (mapIntent.resolveActivity(mChatActivity.getPackageManager()) != null) {
-                    mChatActivity.startActivity(mapIntent);
-                }
+                Bundle bundle = new Bundle();
+                bundle.putString("LAT",latLon[0]);
+                bundle.putString("LON",latLon[1]);
+
+                DialogMap dialogMap= new DialogMap();
+                dialogMap.setArguments(bundle);
+                dialogMap.show(mChatActivity.getSupportFragmentManager(), "dlg1");
+
+
+
+
+//                LayoutInflater inflater = LayoutInflater.from(mContext);
+//                View imgEntryView = inflater.inflate(R.layout.dialog_item_image, null);
+//
+//                final Dialog dialog=new Dialog(mContext,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+//                ImageView img = (ImageView) imgEntryView
+//                        .findViewById(R.id.dialog_image);
+//
+//
+//                dialog.setContentView(imgEntryView);
+//                dialog.show();
+
+
+
+
+//                Uri gmmIntentUri = Uri.parse("geo:0,0?q="+latLon[0]+","+latLon[1]);
+//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                mapIntent.setPackage("com.google.android.apps.maps");
+//                if (mapIntent.resolveActivity(mChatActivity.getPackageManager()) != null) {
+//                    mChatActivity.startActivity(mapIntent);
+//                }
             }
         });
 
     }
 
 
-    private void setAudio(FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder){
+    private void setAudio(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder){
+// make dow
 
-        mIsPlaing = false;
 
+      //  mIsPlaing = false;
 
-        final MediaPlayer mp = new MediaPlayer();
-        try {
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mp.setDataSource(friendlyMessage.getAudioUrl());
-            mp.prepareAsync();
-            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-
-                    viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
-                }
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//
+//        final MediaPlayer mp = new MediaPlayer();
+//        try {
+//            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//            mp.setDataSource(friendlyMessage.getAudioUrl());
+//            mp.prepareAsync();
+//            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                @Override
+//                public void onPrepared(MediaPlayer mp) {
+//
+//                    viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
+//                }
+//            });
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         viewHolder.messengerPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mIsPlaing) {
-                    mp.start();
-                    mIsPlaing = true;
-                }else if(mIsPlaing){
-                    mp.pause();
-                    mIsPlaing =false;
-                }
+                Bundle bundle = new Bundle();
+                bundle.putString("URL",friendlyMessage.getAudioUrl());
+                DialogAudio dialogAudio = new DialogAudio();
+                dialogAudio.setArguments(bundle);
+                dialogAudio.show(mChatActivity.getSupportFragmentManager(), "DialogVideo");
+
+
+//                if(!mIsPlaing) {
+//                    mp.start();
+//                    mIsPlaing = true;
+//                }else if(mIsPlaing){
+//                    mp.pause();
+//                    mIsPlaing =false;
+//                }
             }
         });
 
-        viewHolder.messageTextView.setText("You have audio message");
+        viewHolder.messageTextView.setText("Audio message");
         viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
-        viewHolder.messageVideoView.setVisibility(VideoView.GONE);
+        //viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
 
@@ -242,7 +287,7 @@ public class MessageShower {
             viewHolder.messengerWebView.setVisibility(TextView.VISIBLE);
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
-            viewHolder.messageVideoView.setVisibility(ImageView.GONE);
+            //viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
 
 
@@ -253,11 +298,11 @@ public class MessageShower {
 
             viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
-            viewHolder.messageVideoView.setVisibility(ImageView.GONE);
+           // viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         }
     }
-    private void setVideo(final FriendlyMessage friendlyMessage, MessageViewHolder viewHolder) {
+    private void setVideo(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder) {
 
 //        YouTubePlayerView youTubePlayerView;
 //        YouTubePlayer.OnInitializedListener  onInitializedListener = new YouTubePlayer.OnInitializedListener() {
@@ -276,14 +321,23 @@ public class MessageShower {
 
 
 
-        MediaController mediacontroller = new MediaController(mChatActivity);
-        viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
-        mediacontroller.setAnchorView( viewHolder.messageVideoView);
-        mediacontroller.setAnchorView( viewHolder.messageVideoView);
+//        MediaController mediacontroller = new MediaController(mChatActivity);
+//        viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
+//        mediacontroller.setAnchorView( viewHolder.messageVideoView);
+//
+//        viewHolder.messageVideoView.setMediaController(mediacontroller);
 
-        viewHolder.messageVideoView.setMediaController(mediacontroller);
 
-        viewHolder.messageVideoView.start();
+        viewHolder.messengerPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("URL",friendlyMessage.getVideoUrl());
+                DialogVideo dialogVideo = new DialogVideo();
+                dialogVideo.setArguments(bundle);
+                dialogVideo.show(mChatActivity.getSupportFragmentManager(), "DialogVideo");
+            }
+        });
 //
 //        viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
 //        viewHolder.messageVideoView.setMediaController(new MediaController(mContext));
@@ -291,16 +345,20 @@ public class MessageShower {
 //        viewHolder.messageVideoView.requestFocus();
 
 
-        viewHolder.messageVideoView.setVisibility(VideoView.VISIBLE);
-
+       // viewHolder.messageVideoView.setVisibility(VideoView.VISIBLE);
+        viewHolder.messageTextView.setText("Video message");
+        viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
-        viewHolder.messageTextView.setVisibility(TextView.GONE);
-        viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
+
+        viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
 
     }
 
     private void setImage(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder) {
+
+        viewHolder.messageImageView.setMaxHeight(R.dimen.map_size);
+        viewHolder.messageImageView.setMaxWidth(R.dimen.map_size);
 
         String imageUrl = friendlyMessage.getImageUrl();
 
@@ -332,7 +390,7 @@ public class MessageShower {
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
 
-        viewHolder.messageVideoView.setVisibility(ImageView.GONE);
+        //viewHolder.messageVideoView.setVisibility(ImageView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
 
@@ -341,7 +399,7 @@ public class MessageShower {
             @Override
             public void onClick(View v) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
-                View imgEntryView = inflater.inflate(R.layout.dialog_item, null);
+                View imgEntryView = inflater.inflate(R.layout.dialog_item_image, null);
 
                 final Dialog dialog=new Dialog(mContext,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                 ImageView img = (ImageView) imgEntryView
@@ -390,5 +448,78 @@ public class MessageShower {
         });
 
     }
+
+
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                URL url = new URL(f_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.connect();
+
+                int lenghtOfFile = conection.getContentLength();
+
+                // download the file
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+
+                // Output stream
+                OutputStream output = new FileOutputStream(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/2011.kml");
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    // publishing the progress....
+                    // After this onProgressUpdate will be called
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+
+                    // writing data to file
+                    output.write(data, 0, count);
+                }
+
+                // flushing output
+                output.flush();
+
+                // closing streams
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+
+            return null;
+        }
+
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+
+        }
+
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog after the file was downloaded
+
+
+        }
+
+    }
+
+
+
 
 }
