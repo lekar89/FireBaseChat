@@ -151,7 +151,7 @@ public class MessageShower {
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
        // viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
-        viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+        viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
         viewHolder.messageImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,12 +234,12 @@ public class MessageShower {
 //                }
             }
         });
-
+        viewHolder.messengerPlayButton.setVisibility(View.VISIBLE);
         viewHolder.messageTextView.setText("Audio message");
         viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
         //viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
-        viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+        viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
 
     }
     private void setUserPhoto( FriendlyMessage friendlyMessage,  MessageViewHolder viewHolder) {
@@ -283,7 +283,7 @@ public class MessageShower {
             viewHolder.messengerWebView.setWebViewClient(new MyWebViewClient());
             viewHolder.messageTextView.setText(Uri.parse(friendlyMessage.getText()).getAuthority());
 
-            viewHolder.messengerLinearLayout.setVisibility(TextView.VISIBLE);
+            viewHolder.messengerRelativeLayout.setVisibility(TextView.VISIBLE);
             viewHolder.messengerWebView.setVisibility(TextView.VISIBLE);
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
@@ -296,7 +296,7 @@ public class MessageShower {
             viewHolder.messageTextView.setText(friendlyMessage.getText());
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
 
-            viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+            viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
            // viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
@@ -351,7 +351,7 @@ public class MessageShower {
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
 
         viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
-        viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+        viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
 
     }
 
@@ -392,7 +392,7 @@ public class MessageShower {
 
         //viewHolder.messageVideoView.setVisibility(ImageView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
-        viewHolder.messengerLinearLayout.setVisibility(TextView.GONE);
+        viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
 
 
         viewHolder.messageImageView.setOnClickListener(new View.OnClickListener() {

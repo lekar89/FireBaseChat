@@ -5,8 +5,8 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -28,7 +28,8 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     public  ImageButton    messengerPlayButton;
     public  MediaController messengerPlayer;
     public  CircleImageView messengerImageView;
-    public  LinearLayout    messengerLinearLayout;
+    public RelativeLayout messengerRelativeLayout;
+    public  TextView messageTextForLink;
 
    // public YouTubePlayerView youTubePlayerView;
 
@@ -42,11 +43,12 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
        // messageVideoView      = (VideoView)        itemView.findViewById(R.id.messageVideoView);
         messengerTextView     = (TextView)         itemView.findViewById(R.id.messengerTextView);
         messengerTime         = (TextView)         itemView.findViewById(R.id.message_time);
+        messageTextForLink = (TextView)         itemView.findViewById(R.id.message_text_for_link);
         messengerImageView    = (CircleImageView)  itemView.findViewById(R.id.messengerImageView);
         messengerPlayer       = (MediaController)  itemView.findViewById(R.id.message_audio_controller);
         messengerPlayButton   = (ImageButton)     itemView.findViewById(R.id.message_play_button);
         messengerWebView      = (WebView)          itemView.findViewById(R.id.message_web_view);
-        messengerLinearLayout = (LinearLayout)     itemView.findViewById(R.id.message_layout_for_web);
+        messengerRelativeLayout = (RelativeLayout)     itemView.findViewById(R.id.message_layout_for_web);
 
        // youTubePlayerView   = (YouTubePlayerView)   itemView.findViewById(R.id.messengerYoutube);
     }

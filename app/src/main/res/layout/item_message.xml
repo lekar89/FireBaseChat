@@ -56,18 +56,27 @@
                 />
 
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/message_layout_for_web"
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
+                android:layout_height="300dp"
+                android:orientation="vertical">
 
                 <WebView
                     android:id="@+id/message_web_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
+                <TextView
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/message_text_for_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-            </LinearLayout>
+
+
+            </RelativeLayout>
 
             <MediaController
                 android:id="@+id/message_audio_controller"
@@ -83,6 +92,7 @@
 
                 />
             <TextView
+                android:layout_gravity="right"
                 android:id="@+id/message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,7 +100,8 @@
                 android:textSize="10sp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/grey_300"
-                tools:text="Noice man !"/>
+                tools:text="text"/>
+
             <!--<com.google.android.youtube.player.YouTubePlayerView-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
