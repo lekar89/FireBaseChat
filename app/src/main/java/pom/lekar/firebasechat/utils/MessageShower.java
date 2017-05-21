@@ -54,7 +54,7 @@ import static com.google.android.gms.internal.zzt.TAG;
 
 
 public class MessageShower {
-    private  boolean             mIsPlaing;
+
     private  Context             mContext;
     private  ProgressBar         mProgressBar;
     private  ChatActivity        mChatActivity;
@@ -137,7 +137,6 @@ public class MessageShower {
     }
 
 
-
     private void setLocation(FriendlyMessage mFriendlyMessage, MessageViewHolder viewHolder) {
 
         final String[] latLon = mFriendlyMessage.getLatLong().split("!",2);
@@ -149,9 +148,9 @@ public class MessageShower {
 
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
-       // viewHolder.messageVideoView.setVisibility(VideoView.GONE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
         viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
+
         viewHolder.messageImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,85 +162,11 @@ public class MessageShower {
                 dialogMap.setArguments(bundle);
                 dialogMap.show(mChatActivity.getSupportFragmentManager(), "dlg1");
 
-
-
-
-//                LayoutInflater inflater = LayoutInflater.from(mContext);
-//                View imgEntryView = inflater.inflate(R.layout.dialog_item_image, null);
-//
-//                final Dialog dialog=new Dialog(mContext,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-//                ImageView img = (ImageView) imgEntryView
-//                        .findViewById(R.id.dialog_image);
-//
-//
-//                dialog.setContentView(imgEntryView);
-//                dialog.show();
-
-
-
-
-//                Uri gmmIntentUri = Uri.parse("geo:0,0?q="+latLon[0]+","+latLon[1]);
-//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                mapIntent.setPackage("com.google.android.apps.maps");
-//                if (mapIntent.resolveActivity(mChatActivity.getPackageManager()) != null) {
-//                    mChatActivity.startActivity(mapIntent);
-//                }
             }
         });
 
     }
 
-
-    private void setAudio(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder){
-// make dow
-
-
-      //  mIsPlaing = false;
-
-//
-//        final MediaPlayer mp = new MediaPlayer();
-//        try {
-//            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//            mp.setDataSource(friendlyMessage.getAudioUrl());
-//            mp.prepareAsync();
-//            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//                @Override
-//                public void onPrepared(MediaPlayer mp) {
-//
-//                    viewHolder.messengerPlayButton.setVisibility(VideoView.VISIBLE);
-//                }
-//            });
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        viewHolder.messengerPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("URL",friendlyMessage.getAudioUrl());
-                DialogAudio dialogAudio = new DialogAudio();
-                dialogAudio.setArguments(bundle);
-                dialogAudio.show(mChatActivity.getSupportFragmentManager(), "DialogVideo");
-
-
-//                if(!mIsPlaing) {
-//                    mp.start();
-//                    mIsPlaing = true;
-//                }else if(mIsPlaing){
-//                    mp.pause();
-//                    mIsPlaing =false;
-//                }
-            }
-        });
-        viewHolder.messengerPlayButton.setVisibility(View.VISIBLE);
-        viewHolder.messageTextView.setText("Audio message");
-        viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
-        //viewHolder.messageVideoView.setVisibility(VideoView.GONE);
-        viewHolder.messageImageView.setVisibility(ImageView.GONE);
-        viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
-
-    }
     private void setUserPhoto( FriendlyMessage friendlyMessage,  MessageViewHolder viewHolder) {
 
         viewHolder.messengerWebView.setVisibility(TextView.GONE);
@@ -253,6 +178,28 @@ public class MessageShower {
                     .into(viewHolder.messengerImageView);
 
         }
+    }
+
+    private void setAudio(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder){
+
+        viewHolder.messengerPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("URL",friendlyMessage.getAudioUrl());
+                DialogAudio dialogAudio = new DialogAudio();
+                dialogAudio.setArguments(bundle);
+                dialogAudio.show(mChatActivity.getSupportFragmentManager(), "DialogVideo");
+
+
+            }
+        });
+        viewHolder.messengerPlayButton.setVisibility(View.VISIBLE);
+        viewHolder.messageTextView.setText("Audio message");
+        viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
+        viewHolder.messageImageView.setVisibility(ImageView.GONE);
+        viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
+
     }
 
     private void setText(final FriendlyMessage friendlyMessage, MessageViewHolder viewHolder) {
@@ -287,7 +234,6 @@ public class MessageShower {
             viewHolder.messengerWebView.setVisibility(TextView.VISIBLE);
             viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
-            //viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
 
 
@@ -298,34 +244,11 @@ public class MessageShower {
 
             viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
             viewHolder.messageImageView.setVisibility(ImageView.GONE);
-           // viewHolder.messageVideoView.setVisibility(ImageView.GONE);
             viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         }
     }
+
     private void setVideo(final FriendlyMessage friendlyMessage, final MessageViewHolder viewHolder) {
-
-//        YouTubePlayerView youTubePlayerView;
-//        YouTubePlayer.OnInitializedListener  onInitializedListener = new YouTubePlayer.OnInitializedListener() {
-//            @Override
-//            public void onInitializationSuccess(YouTubePlayer.Provider mProvider, YouTubePlayer youTubePlayerView, boolean mB) {
-//                //youTubePlayerView.loadVideo(friendlyMessage.getPhotoUrl());
-//                youTubePlayerView.loadVideo("a4NT5iBFuZs");
-//            }
-//
-//            @Override
-//            public void onInitializationFailure(YouTubePlayer.Provider mProvider, YouTubeInitializationResult mYouTubeInitializationResult) {
-//
-//            }
-//        };
-//        viewHolder.youTubePlayerView.initialize("AIzaSyBA1kCSACnQ1MqumnemidYXng0k0iZiuCE",onInitializedListener);
-
-
-
-//        MediaController mediacontroller = new MediaController(mChatActivity);
-//        viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
-//        mediacontroller.setAnchorView( viewHolder.messageVideoView);
-//
-//        viewHolder.messageVideoView.setMediaController(mediacontroller);
 
 
         viewHolder.messengerPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -335,17 +258,12 @@ public class MessageShower {
                 bundle.putString("URL",friendlyMessage.getVideoUrl());
                 DialogVideo dialogVideo = new DialogVideo();
                 dialogVideo.setArguments(bundle);
+
+
                 dialogVideo.show(mChatActivity.getSupportFragmentManager(), "DialogVideo");
             }
         });
-//
-//        viewHolder.messageVideoView.setVideoPath(friendlyMessage.getVideoUrl());
-//        viewHolder.messageVideoView.setMediaController(new MediaController(mContext));
-//
-//        viewHolder.messageVideoView.requestFocus();
 
-
-       // viewHolder.messageVideoView.setVisibility(VideoView.VISIBLE);
         viewHolder.messageTextView.setText("Video message");
         viewHolder.messageTextView.setVisibility(TextView.VISIBLE);
         viewHolder.messageImageView.setVisibility(ImageView.GONE);
@@ -390,7 +308,6 @@ public class MessageShower {
         viewHolder.messageImageView.setVisibility(ImageView.VISIBLE);
         viewHolder.messageTextView.setVisibility(TextView.GONE);
 
-        //viewHolder.messageVideoView.setVisibility(ImageView.GONE);
         viewHolder.messengerPlayButton.setVisibility(VideoView.GONE);
         viewHolder.messengerRelativeLayout.setVisibility(TextView.GONE);
 
@@ -518,8 +435,5 @@ public class MessageShower {
         }
 
     }
-
-
-
 
 }

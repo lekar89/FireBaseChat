@@ -25,7 +25,7 @@ public class DialogMap extends DialogFragment {
 
 
     private MapView mMapView;
-    private GoogleMap googleMap;
+
     private double lat;
     private double lon;
 
@@ -33,14 +33,16 @@ public class DialogMap extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().setTitle("MAP!");
+
+
         lat=Double.parseDouble(getArguments().getString("LAT"));
         lon=Double.parseDouble(getArguments().getString("LON"));
+
         View rootView = inflater.inflate(R.layout.dialog_item_map, container, false);
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-
-        mMapView.onResume(); // needed to get the map to display immediately
+        mMapView.onResume();
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -51,18 +53,12 @@ public class DialogMap extends DialogFragment {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
+                LatLng point = new LatLng(lat, lon);
+                mMap.addMarker(new MarkerOptions().position(point));
 
-                // For showing a move to my location button
-                //googleMap.setMyLocationEnabled(true);
 
-                // For dropping a marker at a point on the Map
-                LatLng sydney = new LatLng(lat, lon);
-                googleMap.addMarker(new MarkerOptions().position(sydney));
-
-                // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(16).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(point).zoom(17).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         });
 
@@ -93,43 +89,3 @@ public class DialogMap extends DialogFragment {
         mMapView.onLowMemory();
     }
 }
-
-//    final String LOG_TAG = "myLogs";
-//
-//    SupportMapFragment mapFragment;
-//    GoogleMap map;
-//
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        getDialog().setTitle("Title!");
-//        View v = inflater.inflate(R.layout.dialog_item_map, null);
-//
-//
-//        mapFragment = (SupportMapFragment) getFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(new OnMapReadyCallback() {
-//            @Override
-//            public void onMapReady(GoogleMap mGoogleMap) {
-//                map.addMarker(new MarkerOptions()
-//                        .position(new LatLng(0, 0))
-//                        .title("Marker"));
-//            }
-//        });
-//        return v;
-//    }
-//
-//    public void onClick(View v) {
-//        Log.d(LOG_TAG, "Dialog 1: " + ((Button) v).getText());
-//        dismiss();
-//    }
-//
-//    public void onDismiss(DialogInterface dialog) {
-//        super.onDismiss(dialog);
-//        Log.d(LOG_TAG, "Dialog 1: onDismiss");
-//    }
-//
-//    public void onCancel(DialogInterface dialog) {
-//        super.onCancel(dialog);
-//        Log.d(LOG_TAG, "Dialog 1: onCancel");
-//    }
-//}

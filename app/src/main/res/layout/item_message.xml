@@ -102,16 +102,11 @@
                 android:textColor="@color/grey_300"
                 tools:text="text"/>
 
-            <!--<com.google.android.youtube.player.YouTubePlayerView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/messengerYoutube">-->
-            <!--</com.google.android.youtube.player.YouTubePlayerView>-->
 
             <TextView
                 android:id="@+id/messengerTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 

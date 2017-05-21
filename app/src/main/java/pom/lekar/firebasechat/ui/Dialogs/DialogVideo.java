@@ -25,11 +25,9 @@ public class DialogVideo extends DialogFragment  {
 
         MediaController mediacontroller = new MediaController(getContext());
         mVideoView = (VideoView) v.findViewById(R.id.dialog_video_view);
-
+        mVideoView.setZOrderOnTop(true);
 
         mVideoView.setVideoPath(getArguments().getString("URL"));
-        //mediacontroller.setAnchorView( mVideoView);
-        //mVideoView.setOnClickListener(this);
 
         mVideoView.start();
         mVideoView.setMediaController(mediacontroller);

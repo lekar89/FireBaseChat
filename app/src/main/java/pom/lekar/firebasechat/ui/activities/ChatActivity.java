@@ -36,10 +36,7 @@ import static pom.lekar.firebasechat.Constants.REQUEST_VIDEO;
 
 
 public class ChatActivity extends AppCompatActivity
-//                        extends   YouTubeBaseActivity
         implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-
-
 
     private static final String TAG = "ChatActyvity";
 
@@ -99,11 +96,11 @@ public class ChatActivity extends AppCompatActivity
 
         mUsername = mFirebaseUser.getDisplayName();
 
-        setPhtoto();
+        setPhoto();
 
-    }//end of onCreate
+    }
 
-    private void setPhtoto() {
+    private void setPhoto() {
         if (mFirebaseUser.getPhotoUrl() != null) {
             mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
         }
@@ -120,7 +117,7 @@ public class ChatActivity extends AppCompatActivity
     protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-
+        mLinearLayoutUP.setVisibility(View.GONE);
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE || requestCode == REQUEST_VIDEO ||requestCode ==REQUEST_AUDIO) {
 
@@ -133,7 +130,7 @@ public class ChatActivity extends AppCompatActivity
             }
             if (requestCode == REQUEST_LOCATION) {
                 Place place = PlacePicker.getPlace(data, this);
-                //Place place = PlacePicker.getPlace(this,data);
+
 
                 FriendlyMessage message = new FriendlyMessage ( mUsername,mPhotoUrl);
                 message.setLatLong(String.valueOf(place.getLatLng().latitude)+"!"
